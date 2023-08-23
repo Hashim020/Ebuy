@@ -1,0 +1,25 @@
+const mongoose = require("mongoose");
+mongoose.connect("mongodb://127.0.0.1:27017/Ebuy");
+
+const express = require("express");
+const app = express();
+app.use(express.json())
+app.set('view engine','ejs')
+app.set('views','./Views/User');
+app.set('views','./Views/Admin');
+
+
+app.use(express.static('Views/User'))
+app.use(express.static('Views/Admin'))
+
+const userRoute = require('./Routes/userRoute')
+app.use('/',userRoute)
+
+const adminRoute = require('./Routes/AdminRoute')
+app.use('/admin',adminRoute)
+
+
+
+app.listen(3000,()=>{
+    console.log("Server is Running: http://localhost:3000");
+})

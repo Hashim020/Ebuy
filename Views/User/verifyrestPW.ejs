@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<link rel="stylesheet" href="../Ebuy/Views/User/Assets/css/verifyotp.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<body>
+    <form action="/verifyresetpw" method="post">
+        <div class="d-flex justify-content-center align-items-center container">
+            <div class="card py-5 px-3">
+                <h5 class="m-0">Mobile phone verification Password reset</h5>
+                <span class="mobile-text">Enter the code we just send on your mobile phone</span>
+                <input type="number" name="otp" id="otpInput" placeholder="Enter Your OTP" required>
+                <span>
+                    <button type="submit" class="btn btn-success" style="margin-left: 134px; position: absolute; margin-top: 10px;">Verify</button>
+                </span>
+                <div class="text-center mt-5">
+                    <span class="d-block mobile-text">Don't receive the code?</span>
+                    <button type="button"  id="resendButton" class="font-weight-bold text-danger cursor">Resend</button>
+                    <span id="countdown" class="ml-2"></span>
+                </div>
+            </div>
+        </div>
+        <% if(typeof message!=='undefined' ){ %>
+            <h6 style="color:rgb(255, 38, 0);">  <%= message %></h6>
+            <% } %>
+    </form>
+
+    <script>
+        // Resend button element
+        const resendButton = document.getElementById("resendButton");
+        const countdownElement = document.getElementById("countdown");
+        const otpInput = document.getElementById("otpInput");
+        let countdown = 30; // Initial countdown value in seconds
+
+        function enableResendButton() {
+            resendButton.disabled = false;
+            countdownElement.textContent = "";
+        }
+
+        function updateCountdown() {
+            countdownElement.textContent = `Resend in ${countdown} seconds`;
+            countdown--;
+
+            if (countdown < 0) {
+                clearInterval(countdownInterval);
+                enableResendButton();
+            }
+        }
+
+        resendButton.disabled = true;
+        const countdownInterval = setInterval(updateCountdown, 1000); // Update countdown every second
+        updateCountdown(); // Display initial countdown immediately
+
+        setTimeout(() => {
+            clearInterval(countdownInterval);
+            enableResendButton();
+        }, countdown * 1000); // Enable resend button when countdown reaches 0
+
+        otpInput.addEventListener("input", () => {
+            const inputLength = otpInput.value.length;
+            if (inputLength > 6) {
+                otpInput.setCustomValidity("Please enter only six digits.");
+            } else {
+                otpInput.setCustomValidity("");
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+</body>
+</html>
