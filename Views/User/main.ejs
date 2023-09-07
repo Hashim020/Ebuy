@@ -55,7 +55,7 @@
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Categories <span class="caret"></span></a>
 							<ul class="dropdown-menu" style="width: auto;white-space: nowrap;">
 								<% categories.forEach(category => { %>
-									<a href="" style="display: block;width: 100%;"><li><%=category.name%></li></a>
+									<a href="showproducts/<%=category?._id%>" style="display: block;width: 100%;"><li><%=category.name%></li></a>
 									<% }); %>
 							</ul>
 						</li>

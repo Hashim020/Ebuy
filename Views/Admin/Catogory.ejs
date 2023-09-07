@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Modernize Free</title>
+  <title>Category Management</title>
   <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
   <link rel="stylesheet" href="../assets/css/styles.min.css" />
 </head>
@@ -18,7 +18,7 @@
       <!-- Sidebar scroll-->
       <div>
         <div class="brand-logo d-flex align-items-center justify-content-between">
-          <a href="./index.html" class="text-nowrap logo-img">
+          <a href="/admin" class="text-nowrap logo-img">
             <img src="../assets/images/logos/dark-logo.svg" width="180" alt="" />
           </a>
           <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
@@ -63,7 +63,7 @@
             <li class="sidebar-item">
               <a class="sidebar-link" href="Usermanagement" aria-expanded="false">
                 <span>
-                  <i class="ti ti-cards"></i>
+                  <i class="ti ti-user"></i>
                 </span>
                 <span class="hide-menu">User Management</span>
               </a>
@@ -143,153 +143,67 @@
 <!-- ===========Start of Catogory card=================================================================================================================== -->
 <div class="container-fluid">
   <div class="card">
-      <div class="card-body">
-          <h2 class="d-inline-block">Category Management</h2>
-          <% if(typeof message!=='undefined' ){ %>
-            <h6 style="color:#04c414;">  <%= message %></h6>
-            <% } %>
-          <button id="addButton" class="btn btn-success float-end">Add New</button>
-          <div id="addForm" class="d-none mt-4">
-              <h4>Add New Category</h4>
-              <form action="addcatogory" method="post">
-                  <div class="mb-3">
-                      <label for="categoryName" class="form-label">Category Name</label>
-                      <input name="Categoryname" type="text" class="form-control" id="categoryName" required>
-                  </div>
-                  <div class="mb-3">
-                      <label for="categoryDescription" class="form-label">Category Description</label>
-                      <textarea type="text" name="Categorydescription" class="form-control" id="categoryDescription" rows="4" required></textarea>
-                  </div>
-                  <button type="submit" id="saveButton" class="btn btn-primary">Save</button>
-              </form>
+    <div class="card-body">
+      <h2 class="d-inline-block">Category Management</h2>
+      <% if(typeof message !== 'undefined') { %>
+      <h6 style="color:#04c414;"> <%= message %></h6>
+      <% } %>
+      <button id="addButton" class="btn btn-success float-end">Add New</button>
+      <div id="addForm" class="d-none mt-4">
+        <h4>Add New Category</h4>
+        <form action="addcatogory" method="post">
+          <div class="mb-3">
+            <label for="categoryName" class="form-label">Category Name</label>
+            <input name="Categoryname" type="text" class="form-control" id="categoryName" required>
           </div>
-          <form action="updatecategory" method="post">
-
-          <table class="table mt-4">
-            <thead>
-                <tr>
-                    <th class="text-start">Category Name</th>
-                    <th class="text-start">Description</th>
-                    <th class="text-start">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-              <% categories.forEach(category => { %>
-                <input type="hidden" value="<%= category._id %>" name="id" id="">
-                  <tr class="editable-row">
-                    
-                      <td class="text-start">
-                          <span class="editable-field"><%= category.name %></span>
-                          <input type="text" name="categoryname" class="form-control d-none" value="<%= category.name %>">
-                      </td>
-                      <td class="text-start">
-                          <span class="editable-field"><%= category.description %></span>
-                          <input type="text" name="categorydescription" class="form-control d-none" value="<%= category.description %>">
-                      </td>
-                      <td class="text-start">
-                          <button type="button" class="btn btn-primary btn-sm edit-button">Edit</button>
-                          <a href="updatecategory/<%= category?._id %>"><button type="submit" class="btn btn-success btn-sm save-button d-none" data-category-id="<%= category._id %>">Save</button></a>
-                          <button type="button" class="btn btn-danger btn-sm cancel-button d-none">Cancel</button>
-                      </td>
-                  </tr>
-              <% }); %>
-          </tbody>
-        </table>
-      </form>
-        
+          <div class="mb-3">
+            <label for="categoryDescription" class="form-label">Category Description</label>
+            <textarea type="text" name="Categorydescription" class="form-control" id="categoryDescription"
+              rows="4" required></textarea>
+          </div>
+          <button type="submit" id="saveButton" class="btn btn-primary">Save</button>
+        </form>
       </div>
+      <table class="table table-bordered  ">
+        <thead>
+          <tr>
+            <th class="text-start">Category Name</th>
+            <th class="text-start">Description</th>
+            <th class="text-start">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% categories.forEach(category => { %>
+          <tr>
+            <td class="text-start">
+              <span class="editable-field"><%= category.name %></span>
+            </td>
+            <td class="text-start">
+              <span class="editable-field"><%= category.description %></span>
+            </td>
+            <td class="text-start">
+              <a href="Editcatgory/<%= category?._id %>">
+                <button type="button" class="btn btn-primary btn-sm edit-button">Edit</button>
+              </a>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
+
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-      const editableRows = document.querySelectorAll(".editable-row");
-
-      editableRows.forEach(row => {
-          const editButton = row.querySelector(".edit-button");
-          const saveButton = row.querySelector(".save-button");
-          const cancelButton = row.querySelector(".cancel-button");
-          const editableFields = row.querySelectorAll(".editable-field");
-          const inputFields = row.querySelectorAll("input");
-
-          editButton.addEventListener("click", () => {
-              editableFields.forEach(field => field.classList.add("d-none"));
-              inputFields.forEach(input => input.classList.remove("d-none"));
-              editButton.classList.add("d-none");
-              saveButton.classList.remove("d-none");
-              cancelButton.classList.remove("d-none");
-          });
-
-
-
-
-
-
-
-
-
-          cancelButton.addEventListener("click", () => {
-              editableFields.forEach((field, index) => {
-                  inputFields[index].value = field.textContent;
-                  inputFields[index].classList.add("d-none");
-                  field.classList.remove("d-none");
-              });
-
-              editButton.classList.remove("d-none");
-              cancelButton.classList.add("d-none");
-          });
-      });
-  });
-
     const addButton = document.getElementById("addButton");
-  const addForm = document.getElementById("addForm");
+    const addForm = document.getElementById("addForm");
 
-  addButton.addEventListener("click", () => {
+    addButton.addEventListener("click", () => {
       addForm.classList.toggle("d-none");
-  });
-
-  document.addEventListener("DOMContentLoaded", function () {
-    const editableRows = document.querySelectorAll(".editable-row");
-
-    editableRows.forEach(row => {
-        const saveButton = row.querySelector(".save-button");
-        const inputFields = row.querySelectorAll("input");
-
-        saveButton.addEventListener("click", () => {
-            const categoryId = saveButton.getAttribute("data-category-id");
-            const categoryNameInput = row.querySelector('input[name="categoryname"]');
-            const categoryDescriptionInput = row.querySelector('input[name="categorydescription"]');
-
-            const updatedData = {
-                categoryId: categoryId,
-                categoryName: categoryNameInput.value,
-                categoryDescription: categoryDescriptionInput.value
-            };
-
-            // Assuming you're using the Fetch API for AJAX requests
-            fetch('/updatecategory', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updatedData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Handle the server response here if needed
-                console.log(data); // Example: logging the server response
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        });
     });
-});
-
-
+  });
 </script>
-
-  
-
 <!-- ===================================================================================================================================== -->
   <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
   <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

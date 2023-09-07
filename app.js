@@ -11,6 +11,7 @@ app.set('views','./Views/Admin');
 
 app.use(express.static('Views/User'))
 app.use(express.static('Views/Admin'))
+app.use(express.static('images'))
 
 const userRoute = require('./Routes/userRoute')
 app.use('/',userRoute)
@@ -18,7 +19,9 @@ app.use('/',userRoute)
 const adminRoute = require('./Routes/AdminRoute')
 app.use('/admin',adminRoute)
 
-
+app.use('*',(req,res)=>{
+    res.send('404 error')
+})
 
 app.listen(3000,()=>{
     console.log("Server is Running: http://localhost:3000");

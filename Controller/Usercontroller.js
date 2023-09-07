@@ -1,7 +1,11 @@
 const User = require('../Model/userModel')
 const Category = require('../Model/CatogoryModel');
-
-const bcrypt = require('bcrypt')
+const Address= require('../Model/AddressModel');
+const Cart=require('../Model/CartModel');
+const Order=require('../Model/OrderModel');
+const Product = require('../Model/ProductModel');
+const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
 
 
 const accountSid = "AC699517caf31d78c53afb0c00b86d7695";
@@ -127,6 +131,9 @@ const insertUser = async (req, res) => {
 
 const loadlogin = async(req,res)=>{
     try {
+        if(req.session.user_id){
+            res.redirect('/')
+        }else
         res.render('Login')
     } catch (error) {
         console.log(error);
@@ -178,13 +185,208 @@ const ProfileLoad= async (req,res)=>{
         if(userData){
             res.render('userProfile',{userData})
         }else{
-            res.redirect('/?alert=true')
+            res.redirect('login')
         }
     } catch (error) {
-        
+        console.log(error);
     }
 }
 
+
+const loadcheckout=async (req,res)=>{
+    try {
+        const id=req.session.user_id
+        const user=req.session.user_id
+        const categories=await Category.find()
+        const address= await Address.find({userId:id});
+        let cartTotal = 0;
+        
+        const total = await Cart.findOne({user:user});
+        if(total){
+            cartTotal = total.cartTotal;
+        }
+        const cart = await Cart.aggregate([
+            {
+              $match: {user: new mongoose.Types.ObjectId(user)}
+            },
+            
+            { 
+              $unwind: "$cartItems"
+            },
+            {
+              $project:{
+                item:{$toObjectId:("$cartItems.productId")},
+                quantity:"$cartItems.quantity",
+                total:"$cartItems.total"
+              }
+            }, 
+            {
+              $lookup: {
+                from: "products",
+                localField: "item",
+                foreignField: "_id",
+                as: "carted"
+              }
+            },
+            {
+              $project: {
+                item: 1,
+                quantity: 1,
+                total: 1,
+                carted: { $arrayElemAt: ["$carted", 0] }
+              }
+            }
+          ]);
+        
+        console.log(cart);
+        res.render('checkout',{categories,address,cart,cartTotal})
+    } catch (error) {
+        
+        console.log(error);
+    }
+}
+
+
+
+
+const orderplace = async (req, res) => {
+    try {
+      const userId = req.session.user_id;
+      const addressId = req.body.addressId;
+      let paymentMethod = req.body.paymentMethod;
+      if(paymentMethod==='payment-2'){
+        paymentMethod='Cash On Delivery'
+      }
+
+      // Find the user's cart
+      const userCart = await Cart.findOne({ user: userId });
+  
+      if (!userCart || !userCart.cartItems.length) {
+        throw new Error('User cart is empty or not found');
+      }
+  
+      // Find the selected address
+      const orderAddress = await Address.findById(addressId);
+  
+      // Create an array of promises to fetch product details and update stock
+      const productPromises = userCart.cartItems.map(async (item) => {
+        const product = await Product.findById(item.productId);
+        if (!product) {
+          throw new Error(`Product with ID ${item.productId} not found`);
+        }
+  
+        if (product.stock < item.quantity) {
+          throw new Error(`Insufficient stock for product with ID ${item.productId}`);
+        }
+  
+        // Calculate the total and update stock
+        const total = item.quantity * product.price;
+        product.stock -= item.quantity;
+        await product.save();
+  
+        return {
+          productId: item.productId,
+          quantity: item.quantity,
+          total: total,
+        };
+      });
+  
+      // Use Promise.all() to wait for all product details and stock updates
+      const items = await Promise.all(productPromises);
+  
+      // Calculate the subTotal and total
+      const subTotal = items.reduce((total, item) => total + item.total, 0);
+      const total = subTotal; // You can add shipping costs or taxes if needed
+  
+      // Create the order document
+      const newOrder = new Order({
+        user: userId,
+        address: addressId,
+        items: items,
+        total: total,
+        subTotal: subTotal,
+        paymentMethod: paymentMethod,
+      });
+  
+      // Save the order to the database
+      await newOrder.save();
+  
+      // Clear the user's cart
+      if (userCart) {
+        await Cart.deleteOne({ user: userId });
+        res.json({ success: true });
+      } 
+    //   res.redirect('http://localhost:3000/place-order-thankyou');
+    } catch (error) {
+      console.error(error.message);
+      console.log(error);
+    }
+  };
+
+
+  const thankyouorderplaced =async (req,res)=>{
+    try {
+        res.render('thankyou');
+    } catch (error) {
+        console.log(error);
+    }
+  }
+
+
+  const loadorderhistory = async (req, res) => {
+    try {
+      const userId = req.session.user_id;
+      const userData = await User.findOne({ _id: userId });
+      const orders = await Order.find({ user: userId }).populate('address');
+  
+      const ordersWithProductDetails = await Promise.all(orders.map(async (order) => {
+        const populatedItems = await Promise.all(order.items.map(async (item) => {
+          const product = await Product.findById(item.productId);
+          return {
+            ...item.toObject(),
+            productDetails: product ? product.toObject() : null,
+          };
+        }));
+  
+        return {
+          ...order.toObject(),
+          items: populatedItems,
+        };
+      }));
+  
+      res.render('orderhistory', { userData, orders: ordersWithProductDetails });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
+  };
+
+
+  const cancelOrder = async (req, res) => {
+    try {
+      const orderId = req.body.order_id;
+  
+      // Update Order Status
+      await Order.findByIdAndUpdate(orderId, { status: 'CANCELLED' });
+  
+      // Retrieve Order Details
+      const order = await Order.findById(orderId);
+      const items = order.items;
+  
+      // Increase Product Stock
+      items.forEach(async (item) => {
+        const product = await Product.findById(item.productId);
+        product.stock += item.quantity; // Assuming there's a 'stock' property in the Product schema
+        await product.save();
+      });
+  
+      res.redirect('http://localhost:3000/Order-histoty'); // Redirect to order history page after cancelling
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
+  }
+  
 
 
 
@@ -207,4 +409,9 @@ verifyLogin,
 userLogout,
 validation,
 ProfileLoad,
+loadcheckout,
+orderplace,
+thankyouorderplaced,
+loadorderhistory,
+cancelOrder,
 }

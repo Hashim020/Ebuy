@@ -15,6 +15,8 @@ const addcatogory = async (req, res) => {
     try {
         const { Categoryname, Categorydescription } = req.body;
 
+        const namecheck=await Category.find({name:Categoryname});
+        if(namecheck.length===0){
         // Create a new Category instance
         const newCategory = new Category({
             name: Categoryname,
@@ -29,22 +31,43 @@ const addcatogory = async (req, res) => {
 
         // Send a success response with the categories data
         res.render("catogory", {message:"New Category Added Successfully", categories });
+    }else{
+        const categories = await Category.find();
+        res.render("catogory",{message:"CANNOT ADD!!!!",categories})
+    }
     } catch (error) {
         console.error(error);
         res.render("catogory", { message: 'Fail to save Category.' });
     }
 }
 
-const updateCategory = async (req,res) => {
+const Editcatgory = async (req,res) => {
    
     try {
-        const id=req.params._id
-        const newCategory=req.body
-        res.render("catogory",{categories})
+
+        const categories= await Category.find({_id:req.params.id})
+        res.render("editcategory",{categories})
     } catch (error) {
-        console.log(error);
+        
     }
 
+}
+
+const submiteditcatgory= async(req,res)=>{
+    try {
+        const { id, newname, newdescription } = req.body;
+
+        // Assuming you're using Mongoose
+        await Category.findByIdAndUpdate(
+            { _id: id },
+            { $set: { name: newname, description: newdescription } }
+        );
+
+        const categories = await Category.find();
+        res.redirect("Catogory"); // Check the correct redirect URL
+    } catch (error) {
+        console.log("Error:", error);
+    }
 }
 
 
@@ -52,5 +75,6 @@ const updateCategory = async (req,res) => {
 module.exports = {
     addcatogory,
     Loadcatogory,
-    updateCategory,
+    Editcatgory,
+    submiteditcatgory,
 };

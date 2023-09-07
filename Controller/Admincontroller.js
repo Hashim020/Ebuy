@@ -34,18 +34,18 @@ const verifyLogin=async(req,res)=>{
             const passwordMatch = await bcrypt.compare(password,userData.password)
             if(passwordMatch){
                 if(userData.is_admin===0){
-                    res.render('login',{message:"No Admin Access"})
+                    res.render('authentication-login',{message:"No Admin Access"})
                 }else{
                     req.session.admin_id = userData.name
                     res.redirect('/admin/home')
                 }
 
             }else{
-                res.render('login',{message:"Email and password is incorrect"})
+                res.render('authentication-login',{message:"Email and password is incorrect"})
             }
 
         }else{
-            res.render('login',{message:"Email and password is incorrect"})
+            res.render('authentication-login',{message:"Email and password is incorrect"})
         }
     } catch (error) {
         console.log(error.message);
@@ -54,6 +54,15 @@ const verifyLogin=async(req,res)=>{
 const loadDashboard= async(req,res)=>{
     try {
         res.render('home')
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const adminlogout=async (req,res)=>{
+    try {
+        req.session.destroy()
+        res.redirect('/admin')
     } catch (error) {
         console.log(error.message);
     }
@@ -97,11 +106,15 @@ const unblockuser= async (req,res)=>{
 
 
 
+
+
+
  module.exports={
     loadusers,
     Loadadminlogin,
     verifyLogin,
     loadDashboard,
     blockuser,
-    unblockuser
+    unblockuser,
+    adminlogout
  }

@@ -18,12 +18,14 @@ admin_route.use(express.static('./views/Admin'))  // setting this folder as stat
 
 admin_route.get('/',auth.isLogout,adminControl.Loadadminlogin); // login page loading whether admin loged in or not
 admin_route.post('/',adminControl.verifyLogin)// admin credential verify
+admin_route.get("/adminlogout",adminControl.adminlogout)
 
 
 admin_route.get('/home',auth.isLogin,adminControl.loadDashboard)
 admin_route.get('/Catogory',auth.isLogin,CategoryControl.Loadcatogory)// for loading category page
 admin_route.post('/addcatogory',auth.isLogin,CategoryControl.addcatogory); // for addeing new category
-admin_route.get('/deletecategory/:_id',auth.isLogin,CategoryControl.updateCategory); // for addeing new category
+admin_route.get('/Editcatgory/:id',auth.isLogin,CategoryControl.Editcatgory); // for editting
+admin_route.post('/submitedit',auth.isLogin,CategoryControl.submiteditcatgory); // for submitting edit
 
 
 
@@ -32,6 +34,10 @@ admin_route.get('/deletecategory/:_id',auth.isLogin,CategoryControl.updateCatego
 admin_route.get('/Productmmgmt',auth.isLogin,ProductControl.Loadproduct); // for addeing new category
 admin_route.get('/addporductform',auth.isLogin,ProductControl.Loadprodutaddform);
 admin_route.post('/saveproduct',auth.isLogin,ProductControl.addProduct);
+admin_route.get('/unlistproduct/:id',auth.isLogin,ProductControl.unlistproducts);
+admin_route.get('/relistproduct/:id',auth.isLogin,ProductControl.relistproducts);
+admin_route.get('/editproduct/:id',auth.isLogin,ProductControl.producteditform);
+admin_route.post('/proceedtoeditproduct/:id',auth.isLogin,ProductControl.Proceedtoeditprdct);
 
 
 
@@ -47,6 +53,7 @@ admin_route.get('/unblockuser/:id',auth.isLogin,adminControl.unblockuser)
 
 
 
+admin_route.get('/unblockuser/:id',auth.isLogin,adminControl.unblockuser)
 
 
 module.exports=admin_route;

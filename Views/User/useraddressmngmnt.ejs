@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile and Address Management</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <section style="background-color: #eee;">
+        <div class="container py-5">
+            <div class="row">
+                <div class="col">
+                    <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="/">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">User Profile</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="card mb-4">
+                        <div class="card-body text-center" style="max-height: 270px;">
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" alt="avatar"
+                                class="rounded-circle img-fluid" style="width: 90px;">
+                            <h5 class="my-3"><%=userData.name%></h5>
+                            <p class="text-muted mb-1">Full Stack Developer</p>
+                            <p class="text-muted mb-4">Bay Area, San Francisco, CA</p>
+                            <div class="d-flex justify-content-center mb-2">
+                                <a href="/logout"><button type="button" class="btn btn-outline-danger btn-sm">LogOut</button></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mb-4 mb-lg-0">
+                        <div class="card-body p-0">
+                            <div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width: 280px;">
+                                <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+                                <span class="fs-4">Settings</span>
+                                <hr>
+                                <ul class="nav nav-pills flex-column mb-auto">
+                                    <li class="nav-item">
+                                        <a href="http://localhost:3000/MyAccount" class="nav-link link-dark" aria-current="page">
+                                            <svg class="bi me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
+                                            Dashboard
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="http://localhost:3000/MyAccount-address" class="nav-link active">
+                                            <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+                                            Address Management
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="http://localhost:3000/Order-histoty" class="nav-link link-dark">
+                                            <svg class="bi me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
+                                            Orders
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#" class="nav-link link-dark">
+                                            <svg class="bi me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+                                            Products
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#" class="nav-link link-dark">
+                                            <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
+                                            Customers
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="card mb-8" >
+                        <div class="card-body" >
+                            <!-- ================================================= -->
+                            <div class="col-lg-8" >
+                                <!-- Saved Addresses -->
+                                <div class="" >
+                                    <div class="card-body"  >
+                                        <h1>Saved Addresses</h1>
+                                        <table style="width: 150%;" class="table table-layout-fixed">
+                                            <thead>
+                                                <tr >
+                                                    <th width="200">Name</th>
+                                                    <th>Address</th>
+                                                    <th>Phone</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Replace this with dynamic address data -->
+                                                <% address.forEach(address=>{%>
+                                                <tr>
+                                                    <td><%=address.name%></td>
+                                                    <td><%=address.address%>  Pin:<%=address.pincode%> <%=address.state%></td>
+                                                    <td><%=address.mobile%></td>
+                                                    <td>
+                                                        <button class="btn btn-primary">Edit</button>
+                                                        <button class="btn btn-danger">Remove</button>
+                                                    </td>
+                                                </tr>
+                                          <%  }); %>
+                                            </tbody>
+                                        </table>
+                                        <a href="#" id="addAddressButton" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addAddressModal">Add New Address</a>
+                                    </div>
+                                </div>
+
+                                <!-- Add New Address Modal -->
+                                <div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="addAddressModalLabel">Add New Address</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form id="addAddressForm" action="/save-address" method="post">
+                                                    <div class="mb-3">
+                                                        <label for="name" class="form-label">Name</label>
+                                                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter name" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="mobile" class="form-label">Mobile</label>
+                                                        <input type="text" class="form-control" id="mobile" name="mobile" placeholder="Enter mobile number" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="landmark" class="form-label">Landmark</label>
+                                                        <input type="text" class="form-control" id="landmark" name="landmark" placeholder="Enter landmark" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="city" class="form-label">City</label>
+                                                        <input type="text" class="form-control" id="city" name="city" placeholder="Enter city" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="state" class="form-label">State</label>
+                                                        <input type="text" class="form-control" id="state" name="state" placeholder="Enter state" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="pincode" class="form-label">Pincode</label>
+                                                        <input type="text" class="form-control" id="pincode" name="pincode" placeholder="Enter pincode" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="district" class="form-label">District</label>
+                                                        <input type="text" class="form-control" id="district" name="district" placeholder="Enter district" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="address" class="form-label">Address</label>
+                                                        <textarea class="form-control" id="address" name="address" rows="3" placeholder="Enter address"></textarea required>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" form="addAddressForm" class="btn btn-primary">Add Address</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Include Bootstrap JS and Popper.js for Bootstrap functionality -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

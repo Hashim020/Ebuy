@@ -4,9 +4,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Modernize Free</title>
+  <title>Product Management</title>
   <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
   <link rel="stylesheet" href="../assets/css/styles.min.css" />
+
+  <style>
+    .truncate-cell {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px; /* Set a maximum width for the cell */
+    }
+  </style>
+
+<style>
+  /* Style for table rows */
+  .table tbody tr {
+    border-bottom: 1px solid #dee2e6;
+    
+  }
+</style>
 </head>
 
 <body>
@@ -18,7 +35,7 @@
       <!-- Sidebar scroll-->
       <div>
         <div class="brand-logo d-flex align-items-center justify-content-between">
-          <a href="./index.html" class="text-nowrap logo-img">
+          <a href="/admin" class="text-nowrap logo-img">
             <img src="../assets/images/logos/dark-logo.svg" width="180" alt="" />
           </a>
           <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
@@ -63,7 +80,7 @@
             <li class="sidebar-item">
               <a class="sidebar-link" href="Usermanagement" aria-expanded="false">
                 <span>
-                  <i class="ti ti-cards"></i>
+                  <i class="ti ti-user"></i>
                 </span>
                 <span class="hide-menu">User Management</span>
               </a>
@@ -152,7 +169,7 @@
             <% } %>
             <a href="addporductform"><button id="addButton" class="btn btn-success float-end">Add New</button></a>
 
-            <table class="table">
+            <table   class="table table-bordered">
               <thead>
                 <tr>
                   <th>#</th>
@@ -166,22 +183,42 @@
                 </tr>
               </thead>
               <tbody>
+                <% products.forEach((product, index) => { %>
                 <tr>
-                  <td>1</td>
-                  <td>Laptop</td>
-                  <td>Powerful laptop for all your computing needs.</td>
-                  <td>$999</td>
-                  <td>Electronics</td>
-                  <td>10</td>
-                  <td><img src="laptop-image.jpg" alt="Laptop" width="50"></td>
+                  <td><%= index + 1 %></td>
+                  <td><%= product.name %></td>
+                  <td class="truncate-cell"><%= product.description %></td>
+                  <td><%= product.price %></td>
+                  <td><%= categories.name %></td>
+                  <td><%= product.stock %></td>
+                  <td><img src="../Admin/images/<%= product.images[0] %>" alt="Laptop" width="50"></td>
                   <td>
-                    <button class="btn btn-sm btn-primary">Edit</button>
-                    <button class="btn btn-sm btn-danger">Delete</button>
+                    <div class="btn-group" role="group">
+                      <% if (!product.is_Listed) { %>
+                        <button class="btn btn-sm btn-success action-btn relist-btn" data-product-id="<%= product._id %>">
+                          Relist
+                        </button>
+                        <button class="btn btn-sm btn-danger action-btn unlist-btn" data-product-id="<%= product._id %>" style="display: none;">
+                          Unlist
+                        </button>
+                      <% } else { %>
+                        <button class="btn btn-sm btn-success action-btn relist-btn" data-product-id="<%= product._id %>" style="display: none;">
+                          Relist
+                        </button>
+                        <button class="btn btn-sm btn-danger action-btn unlist-btn" data-product-id="<%= product._id %>">
+                          Unlist
+                        </button>
+                      <% } %>
+                      <a href="editproduct/<%= product._id %>" class="btn btn-sm btn-primary">
+                        Edit
+                      </a>
+                    </div>
                   </td>
                 </tr>
-                <tr>
+                <% }); %>
               </tbody>
             </table>
+            
         
       </div>
   </div>
@@ -190,11 +227,50 @@
 
 
 <!-- ===================================================================================================================================== -->
-  <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+
+<script src="../assets/libs/jquery/dist/jquery.min.js"></script>
   <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../assets/js/sidebarmenu.js"></script>
   <script src="../assets/js/app.min.js"></script>
   <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+  
+  <script>
+  document.querySelectorAll('.action-btn').forEach(button => {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const productId = button.getAttribute('data-product-id');
+      const action = button.classList.contains('relist-btn') ? 'relist' : 'unlist';
+
+      try {
+        const response = await fetch(`/admin/${action}product/${productId}`, {
+          method: 'GET'
+        });
+
+        if (response.ok) {
+          // Reload the page after updating the button state
+          location.reload();
+        } else {
+          console.error('Request failed with status:', response.status);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+  });
+    function toggleButtonState(productId, isUnlisted) {
+      const relistButton = document.querySelector(`.relist-btn[data-product-id="${productId}"]`);
+      const unlistButton = document.querySelector(`.unlist-btn[data-product-id="${productId}"]`);
+  
+      if (isUnlisted) {
+        relistButton.style.display = 'inline-block';
+        unlistButton.style.display = 'none';
+      } else {
+        relistButton.style.display = 'none';
+        unlistButton.style.display = 'inline-block';
+      }
+    }
+  </script>
+  
 </body>
 
 </html>
