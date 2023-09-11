@@ -1,16 +1,18 @@
-const User = require('../Model/userModel')
-const Category = require('../Model/CatogoryModel');
-const Address= require('../Model/AddressModel');
-const Cart=require('../Model/CartModel');
-const Order=require('../Model/OrderModel');
-const Product = require('../Model/ProductModel');
+require('dotenv').config();
+const User = require(process.env.UserURL)
+const Category = require(process.env.CategoryURL);
+const Address= require(process.env.AddressURL);
+const Cart=require(process.env.CartURL);
+const Order=require(process.env.OrderURL);
+const Product = require(process.env.ProductURL);
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 
 
-const accountSid = "AC699517caf31d78c53afb0c00b86d7695";
-const authToken = "e51d0aaad990711ac3748388532cf253";
-const verifySid = "VAc36e2459b3afde13af45d3d4536e4eb5";
+
+const accountSid = process.env.accountSid;
+const authToken = process.env.authToken;
+const verifySid = process.env.verifySid;
 const client = require("twilio")(accountSid, authToken);
 
 
@@ -58,6 +60,7 @@ const validation = async (req,res) =>{
 
     const mobile = req.body.mobileNumber
     const email = req.body.email;
+    req.session.user = req.body
     const existingUser = await User.findOne({email:email})
     const existingnumber=await User.findOne({mobile:mobile})
     if (existingUser) {
@@ -66,12 +69,11 @@ const validation = async (req,res) =>{
     if(existingnumber){
         return res.render("Register",{message:"Phone Number Already Exist"})
     }
-    client.verify.v2
+   await client.verify.v2
         .services(verifySid)
-        .verifications.create({ to: `+91${mobile}`, channel: "sms", validityPeriod:120})
+        .verifications.create({ to: `+91${mobile}`, channel: "sms",})
         .then((verification) => {
             console.log(verification.status)
-            req.session.user = req.body
             res.render('verifyOtp',{mobile})
         })
         .catch((error) => {
@@ -93,7 +95,7 @@ const insertUser = async (req, res) => {
         } else {
             client.verify.v2
                 .services(verifySid)
-                .verificationChecks.create({ to: `+91${userDatas.mobileNumber}`, code: otp })
+                .verificationChecks.create({ to: `+91${userDatas.mobileNumber}`, code: otp,  validityPeriod:1000 })
                 .then(async (verification_check) => {
                     console.log(verification_check.status);
                     const spasswords = await securePassword(userDatas.password);

@@ -1,12 +1,14 @@
-const { maxBy } = require('lodash');
-const User = require('../Model/userModel')
+require('dotenv').config();
+
+
+const User = require(process.env.UserURL)
 const bcrypt = require('bcrypt')
 
 
-const accountSid = "AC699517caf31d78c53afb0c00b86d7695";
-const authToken = "e51d0aaad990711ac3748388532cf253";
-const verifySid = "VAc36e2459b3afde13af45d3d4536e4eb5";
-const client = require("twilio")(accountSid, authToken);
+const accountSid = process.env.accountSid;
+const authToken = process.env.authToken;
+const verifySid = process.env.verifySid;
+const client = require("twilio")(accountSid, authToken,accountSid);
 
 
 const Forgotpassword=async(req,res)=>{
@@ -17,36 +19,40 @@ const Forgotpassword=async(req,res)=>{
     }
 }
 
-const forgotPWuserfind=async(req,res)=>{
-    
-    try {
-
-        const mobile = req.body.mobileNumber
-        req.session.mobile=mobile
-
-    const existingnumber=await User.findOne({mobile:mobile})
-    if(existingnumber){
-        
-        client.verify.v2
-        .services(verifySid)
-        .verifications.create({ to: `+91${mobile}`, channel: "sms", })
-        .then((verification) => {
-            console.log(verification.status)
-            res.render("verifyrestPW",{mobile:mobile})
-        })
-        .catch((error) => {
-            console.log(error.message)
-        });
-    }else{
-
-        res.render("ForgotPW",{message:"No User Found"})
+const forgotPWuserfind = async (req, res) => {
+    let success = false;
+    let retries = 10;
+    while (!success && retries > 0) {
+        try {
+            const mobile = req.body.mobileNumber;
+            const existingUser = await User.findOne({ mobile: mobile });
+            
+            if (existingUser) {
+                const verification = await client.verify.v2.services(verifySid)
+                .verifications.create({
+                    to: `+91${mobile}`,
+                    channel: "sms",
+                    validityPeriod: 1000
+                });
+                
+                console.log(verification.status);
+                req.session.mobile = mobile;
+                res.render("verifyrestPW", { mobile: mobile });
+                success = true;
+            } else {
+                res.render("ForgotPW", { message: "No User Found" });
+            }
+        } catch (error) {
+            console.error(error);
+            retries--;
+        }
     }
-        
-    } catch (error) {
-        console.log(error);
-        
+
+    if (!success) {
+        res.status(500).send("Error sending verification code");
     }
-}
+};
+
 
 const forgotPWotpVerify=async(req,res)=>{
 
@@ -57,12 +63,11 @@ try {
     if (!mobile) {
         res.render('verifyrestPW', { message: "User data not found" });
     } else {
-        client.verify.v2
+        await client.verify.v2
         .services(verifySid)
         .verificationChecks.create({ to: `+91${mobile}`, code: otp })
         .then(async (verification_check) => {
             console.log(verification_check.status);
-
             if (verification_check.status === 'approved') {
                 // Correct OTP, proceed to change password
                 res.render("ChangePW",{message:"Enter new password"})

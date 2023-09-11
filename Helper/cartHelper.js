@@ -1,8 +1,10 @@
-const Product= require("../Model/ProductModel");
-const Cart=require('../Model/CartModel');
-const Category =require('../Model/CatogoryModel');
-const User =require('../Model/userModel')
+require('dotenv').config();
+const Product= require(process.env.ProductURL);
+const Cart=require(process.env.CartURL);
+const Category =require(process.env.CategoryURL);
+const User =require(process.env.UserURL);
 const {ObjectId} = require('mongodb')
+
 
 const addCart = async (productId, userId) => {
     const product = await Product.findOne({ _id: productId });

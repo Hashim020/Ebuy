@@ -4,9 +4,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>User Management</title>
+  <title>Category Management</title>
   <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
   <link rel="stylesheet" href="../assets/css/styles.min.css" />
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -141,92 +142,105 @@
       </header>
       <!--  Header End -->
 <!-- ===========Start of Catogory card=================================================================================================================== -->
-
-<div class="container-fluid">
-    <div class="card">
-        <div class="card-body">
-            <h2 class="d-inline-block">User Management</h2>
-            <% if(typeof message!=='undefined' ){ %>
-              <h6 style="color:#04c414;">  <%= message %></h6>
-              <% } %>
-
-              <table class="table table-bordered">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                    <% user.forEach(User => { %>
-                  <tr>
-                    <td><%=User._id%></td>
-                    <td><%=User.name%></td>
-                    <td><%=User.email%></td>
-                    <td>
-                      <a href="unblockuser/<%=User?._id%>"><button type="button"  class="btn btn-success btn-sm" onclick="unblockUser('user123')" >UNBLOCK</button></a>
-                      <a href="blockuser/<%=User?._id%>"><button type="button"  class="btn btn-danger btn-sm" onclick="blockUser('user123')">BLOCK</button></a>
-                    </td>
-                  </tr>
-
-                  <!-- Add more rows as needed -->
-                </tbody>
-              <% }); %>
-              </table>
-
-          
+<div class="container mt-4">
+    <hr>
+    <!-- Display username and shipping address only once for each order -->
+    <div class="row mt-4">
+        <!-- Shipping Address Box -->
+        <div class="col-md-12">
+            <h5 class="text-center">Username: <%= order.user.name %></h5>
+        </div>
+        <div class="col-md-12 mb-3">
+            <div class="border p-3">
+                <h5>Shipping Address</h5>
+                <p><strong>Name: <%= order.user.name %></strong></p>
+                <!-- Replace order.userAddress with order.address -->
+                <p><strong>Address: <%= order.address.address %></strong></p>
+                <p><strong>City: <%= order.address.city %></strong></p>
+                <p><strong>State: <%= order.address.state %></strong></p>
+                <p><strong>Pin Code: <%= order.address.pincode %></strong></p>
+            </div>
         </div>
     </div>
-  </div>
+    <div class="text-start">
+        <p>Payment Method: <strong><%= order.paymentMethod %></strong> </p>
+    </div>
+    <div class="text-start"> 
+        <p>Order Status : <strong> <%= order.status%></strong></p>  
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <select class="form-control" id="statusDropdown">
+                    <option value="Pending">Pending</option>
+                    <option value="Processing">Processing</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="CANCELLED">Cancelled</option>
+                    <option value="Return-Req">Return Request</option>
+                    <option value="Return Accepted">Return Accepted</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-primary" onclick="updateStatus()">Update</button>
+                    <input type="hidden" id="orderId" value="<%=order._id%>">
+                </div>
+            </div>
+        </div> 
+    </div>
+    
+
+    <!-- Loop through each item -->
+    <% order.items.forEach((item, index) => { %>
+        <!-- Product Details Box -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="ms-3">
+                                    <h6><%= item.productId.name %></h6>
+                                </div>
+                            </td>
+                            <td><%= item.quantity %></td>
+                            <td>₹<%= item.total %></td>
+                            <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    <% }) %>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <a href="javascript:history.back()" class="btn btn-primary">Go Back</a>
+        </div>
+    </div>
+</div>
 
 <!-- ===================================================================================================================================== -->
 <script>
-  function blockUser(userId) {
-    Swal.fire({
-      title: 'bloced',
-      text: 'This user will be blocked and won\'t be able to access the system!',
-      icon: 'Success',
-      // showCancelButton: true,
-      // confirmButtonColor: '#d33',
-      // cancelButtonColor: '#3085d6',
-      // confirmButtonText: 'Yes, block user!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // Here you can add your logic to block the user
-        Swal.fire(
-          'Blocked!',
-          'The user has been blocked.',
-          'success'
-        );
-      }
-    });
-  }
-  
-  function unblockUser(userId) {
-    Swal.fire({
-      title: 'User Unblocked',
-      text: 'This user will be unblocked and will regain access to the system!',
-      icon: 'success',
-      // showCancelButton: true,
-      // confirmButtonColor: '#3085d6',
-      // cancelButtonColor: '#d33',
-      // confirmButtonText: 'Yes, unblock user!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // Here you can add your logic to unblock the user
-        Swal.fire(
-          'Unblocked!',
-          'The user has been unblocked.',
-          'success'
-        );
-      }
-    });
-  }
-  </script>
-  
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    function updateStatus() {
+        const selectedStatus = document.getElementById('statusDropdown').value;
+
+        // Make an AJAX POST request
+        fetch('/admin-updateorder', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: selectedStatus }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+</script> 
 <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
   <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../assets/js/sidebarmenu.js"></script>

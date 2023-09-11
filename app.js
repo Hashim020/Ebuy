@@ -1,5 +1,6 @@
+require('dotenv').config();
 const mongoose = require("mongoose");
-mongoose.connect("mongodb://127.0.0.1:27017/Ebuy");
+mongoose.connect(process.env.mongooseconnectURL);
 
 const express = require("express");
 const app = express();
@@ -26,3 +27,5 @@ app.use('*',(req,res)=>{
 app.listen(3000,()=>{
     console.log("Server is Running: http://localhost:3000");
 })
+
+

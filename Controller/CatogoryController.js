@@ -1,4 +1,5 @@
-const Category = require('../Model/CatogoryModel');
+require('dotenv').config();
+const Category = require(process.env.CategoryURL);
 
 
 const Loadcatogory= async(req,res)=>{

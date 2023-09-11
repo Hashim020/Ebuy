@@ -1,6 +1,6 @@
-
-const Category = require('../Model/CatogoryModel');
-const Product = require('../Model/ProductModel');
+require('dotenv').config();
+const Category = require(process.env.CategoryURL);
+const Product = require(process.env.ProductURL);
 const path = require('path')
 
 

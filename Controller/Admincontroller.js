@@ -1,5 +1,8 @@
-const User = require('../Model/userModel')
-const bcrypt = require('bcrypt')
+require('dotenv').config();
+const User = require(process.env.UserURL);
+const Order= require(process.env.OrderURL);
+const bcrypt = require('bcrypt');
+const Product= require(process.env.ProductURL);
 const express = require('express');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
@@ -106,6 +109,45 @@ const unblockuser= async (req,res)=>{
 
 
 
+const loadOrdermanagement = async (req, res) => {
+    try {
+        const Orders = await Order.find().populate('user'); // Use populate to retrieve user data
+
+        res.render('ordermanagement', {Orders});
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const moredetailedorder= async(req,res)=>{
+    try {
+        const orderId = req.params.id
+      const order = await Order.findById(orderId)
+      .populate('user')
+      .populate("items.productId")
+      .populate('address');
+      console.log(order);
+      res.render('Detailedvieworder',{order})
+    } catch (error) {
+      console.log(error);  
+    }
+}
+
+
+const updateorderbyadmin =async (req,res)=>{
+    try {
+        
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+
+
+
+
+
 
 
 
@@ -116,5 +158,8 @@ const unblockuser= async (req,res)=>{
     loadDashboard,
     blockuser,
     unblockuser,
-    adminlogout
+    adminlogout,
+    loadOrdermanagement,
+    moredetailedorder,
+    updateorderbyadmin
  }

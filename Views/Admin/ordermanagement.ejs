@@ -7,6 +7,7 @@
   <title>Category Management</title>
   <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
   <link rel="stylesheet" href="../assets/css/styles.min.css" />
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -69,11 +70,11 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-forms.html" aria-expanded="false">
+              <a class="sidebar-link" href="Order-management" aria-expanded="false">
                 <span>
                   <i class="ti ti-file-description"></i>
                 </span>
-                <span class="hide-menu">Forms</span>
+                <span class="hide-menu">Order Management</span>
               </a>
             </li>
             <li class="sidebar-item">
@@ -141,6 +142,51 @@
       </header>
       <!--  Header End -->
 <!-- ===========Start of Catogory card=================================================================================================================== -->
+<div class="container mt-5">
+    <h1>Order Management</h1>
+    <table class="table" border="1">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer Name</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+                <th>Status</th>
+                <th>More Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% Orders.forEach(function(order) { %>
+                <tr>
+                    <td><%= order._id %></td>
+                    <td><%= order.user.name %></td>
+                    <td>
+                        Total Quantity: 
+                        <% let totalQuantity = 0; %>
+                        <% order.items.forEach(function(item) { %>
+                            <% totalQuantity += item.quantity; %>
+                        <% }); %>
+                        <%= totalQuantity %>
+                    </td>
+                    <td>₹<%= order.items[0].total %></td>
+                    <td>
+                        <% if (order.status === 'Shipped') { %>
+                            <span class="badge badge-success">Shipped</span>
+                        <% } else if (order.status === 'Pending') { %>
+                            <span class="badge badge-warning">Pending</span>
+                        <% } else { %>
+                            <span class="badge badge-danger">Cancelled</span>
+                        <% } %>
+                    </td>
+                    <td>
+                        <a href="/admin/order-details/<%= order._id %>" class="btn btn-info">View Details</a>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</div>
+
 
 <!-- ===================================================================================================================================== -->
   <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
