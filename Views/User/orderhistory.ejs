@@ -78,72 +78,54 @@
                     </div>
                 </div>
                 <div class="col-lg-8">
-                    <div class="card mb-8" >
-                        <div class="card-body" >
-                            <!-- ================================================= -->
-                            <% orders.forEach(function(order,index) { %>
-                                <div class="container">
-                                  <div class="row">
-                                    <div class="col-md-12">
-                                      <h2>Order <%=index+1 %></h2>
-                                      <table class="table table-bordered">
-                                        <tbody>
+                  <div class="card mb-4">
+                      <div class="card-body">
+                          <div class="table-responsive">
+                              <table class="table table-bordered">
+                                  <thead>
+                                      <tr>
+                                          <th>Order Date</th>
+                                          <th>Total</th>
+                                          <th>Ship to</th>
+                                          <th>Order #</th>
+                                          <th>Status</th>
+                                          <th>Action</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      <% orders.forEach(function(order) { %>
                                           <tr>
-                                            <th>Order Date</th>
-                                            <td><%= order.createdAt.toDateString() %></td>
+                                              <td><%= order.createdAt.toDateString() %></td>
+                                              <td>₹<%= order.total %></td>
+                                              <td>
+                                                  <% if (order.address) { %>
+                                                      <%= order.address.name %><br>
+                                                      <%= order.address.address %>
+                                                  <% } else { %>
+                                                      N/A
+                                                  <% } %>
+                                              </td>
+                                              <td><%= order._id %></td>
+                                              <td><%= order.status %></td>
+                                              <td>
+                                                  <form action="/cancel_order" method="post" class="d-inline">
+                                                      <input type="hidden" name="order_id" value="<%= order._id %>">
+                                                      <button type="submit" class="btn btn-sm btn-danger">Cancel Order</button>
+                                                  </form>
+                                                  <a href="/view-more/<%= order._id %>">
+                                                      <button class="btn btn-sm btn-primary">View More</button>
+                                                  </a>
+                                              </td>
                                           </tr>
-                                          <tr>
-                                            <th>Total</th>
-                                            <td>₹<%= order.total %></td>
-                                          </tr>
-                                          <tr>
-                                            <th>Ship to</th>
-                                            <td>
-                                              <% if (order.address) { %>
-                                                <%= order.address.name %>
-                                                <br>
-                                                <%= order.address.address %>
-                                              <% } else { %>
-                                                N/A
-                                              <% } %>
-                                            </td>
-                                          </tr>
-                                          <tr>
-                                            <th>Order #</th>
-                                            <td><%= order._id %></td>
-                                          </tr>
-                                          <tr>
-                                            <th>Order Status</th>
-                                            <td><%= order.status %></td>
-                                          </tr>
-                                          <!-- Add more rows for other order details -->
-                                        </tbody>
-                                      </table>
-                                      <h3>Items</h3>
-                                      <ul>
-                                        <% order.items.forEach(function(item) { %>
-                                          <li>
-                                            <strong><%= item.productDetails.name %></strong><br>
-                                            Quantity: <%= item.quantity %><br>
-                                            Price: ₹<%= item.total %>
-                                          </li>
-                                        <% }); %>
-                                      </ul>
-                                      <form action="/cancel_order" method="post">
-                                        <input type="hidden" name="order_id" value="<%= order._id %>">
-                                        <button type="submit" class="btn btn-danger">Cancel Order</button>
-                                      </form>
-                                    </div>
-                                  </div>
-                                </div>
-                                <hr>
-                              <% }); %>
-                              
-                              
-                              
-                        </div>
-                    </div>
-                </div>
+                                      <% }); %>
+                                  </tbody>
+                              </table>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              
+              
             </div>
         </div>
     </section>

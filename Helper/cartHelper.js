@@ -1,93 +1,150 @@
-require('dotenv').config();
-const Product= require(process.env.ProductURL);
-const Cart=require(process.env.CartURL);
-const Category =require(process.env.CategoryURL);
-const User =require(process.env.UserURL);
+const Product= require('../Model/ProductModel');
+const Cart=require('../Model/CartModel');
+const Category =require('../Model/CatogoryModel')
+const User =require('../Model/userModel');
 const {ObjectId} = require('mongodb')
 
 
-const addCart = async (productId, userId) => {
-    const product = await Product.findOne({ _id: productId });
-    const productObj = {
-        productId: productId,
-        quantity: 1,
-        total: product.price,
-        category: product.category
-    };
 
-    try {
-        return new Promise((resolve, reject) => {
-            Cart.findOne({ user: userId }).then(async (cart) => {
-                if (cart) {
-                    const productExist = await Cart.findOne({ user: userId, "cartItems.productId": productId });
-                    if (productExist) {
-                        Cart.updateOne(
-                            { user: userId, "cartItems.productId": productId },
-                            {
-                                $inc: {
-                                    "cartItems.$.quantity": 1,
-                                    "cartItems.$.total": product.price
-                                },
-                                $set: {
-                                    cartTotal: cart.cartTotal + product.price
-                                }
-                            }
-                        ).then((response) => {
-                            // Log success
-                            console.log('Cart updated successfully');
-                            resolve({ status: true });
-                        }).catch((error) => {
-                            // Log error
-                            console.error('Error updating cart:', error);
-                            reject(error);
-                        });
-                    } else {
-                        Cart.updateOne(
-                            { user: userId },
-                            {
-                                $push: { cartItems: productObj },
-                                $inc: { cartTotal: product.price }
-                            }
-                        ).then((response) => {
-                            // Log success
-                            console.log('Cart updated successfully');
-                            resolve({ status: true });
-                        }).catch((error) => {
-                            // Log error
-                            console.error('Error updating cart:', error);
-                            reject(error);
-                        });
-                    }
-                } else {
-                    const newCart = await Cart({
-                        user: userId,
-                        cartItems: productObj,
-                        cartTotal: product.price,
-                        category: product.category
-                    });
-                    await newCart.save().then((response) => {
-                        // Log success
-                        console.log('New cart created successfully');
-                        resolve({ status: true });
-                    }).catch((error) => {
-                        // Log error
-                        console.error('Error creating new cart:', error);
-                        reject(error);
-                    });
-                }
-            }).catch((error) => {
-                // Log error
-                console.error('Error finding cart:', error);
-                reject(error);
-            });
-        });
-    } catch (error) {
-        console.log(error.message);
-        // Log error
-        console.error('Error in try-catch block:', error);
-        reject(error);
-    }
+const addCart = async (productId, userId) => {
+  try {
+      const product = await Product.findOne({ _id: productId });
+      const productObj = {
+          productId: productId,
+          quantity: 1,
+          total: product.price,
+          category: product.category
+      };
+
+      const cart = await Cart.findOne({ user: userId });
+
+      if (cart) {
+          const productExist = await Cart.findOne({ user: userId, "cartItems.productId": productId });
+          if (productExist) {
+              await Cart.updateOne(
+                  { user: userId, "cartItems.productId": productId },
+                  {
+                      $inc: {
+                          "cartItems.$.quantity": 1,
+                          "cartItems.$.total": product.price
+                      },
+                      $set: {
+                          cartTotal: cart.cartTotal + product.price
+                      }
+                  }
+              );
+          } else {
+              await Cart.updateOne(
+                  { user: userId },
+                  {
+                      $push: { cartItems: productObj },
+                      $inc: { cartTotal: product.price }
+                  }
+              );
+          }
+      } else {
+          const newCart = new Cart({
+              user: userId,
+              cartItems: productObj,
+              cartTotal: product.price,
+              category: product.category
+          });
+          await newCart.save();
+      }
+
+      console.log('Cart updated successfully');
+      return { status: true };
+  } catch (error) {
+      console.error('Error in try-catch block:', error);
+      throw error;
+  }
 };
+
+
+
+// const addCart = async (productId, userId) => {
+//     const product = await Product.findOne({ _id: productId });
+//     const productObj = {
+//         productId: productId,
+//         quantity: 1,
+//         total: product.price,
+//         category: product.category
+//     };
+
+//     try {
+//         return new Promise((resolve, reject) => {
+//             Cart.findOne({ user: userId }).then(async (cart) => {
+//                 if (cart) {
+//                     const productExist = await Cart.findOne({ user: userId, "cartItems.productId": productId });
+//                     console.log(productExist);
+//                     if (productExist) {
+//                       Cart.updateOne(
+//                         { user: userId, "cartItems.productId": productId },
+//                         {
+//                           $inc: {
+//                             "cartItems.$.quantity": 1,
+//                             "cartItems.$.total": product.price
+//                           },
+//                           $set: {
+//                             cartTotal: cart.cartTotal + product.price
+//                           }
+//                         }
+//                         ).then((response) => {
+//                             // Log success
+//                             console.log('Cart updated successfully');
+//                             resolve({ status: true });
+//                         }).catch((error) => {
+//                             // Log error
+//                             console.error('Error updating cart:', error);
+//                             reject(error);
+//                         });
+//                     } else {
+//                         Cart.updateOne(
+//                             { user: userId },
+//                             {
+//                                 $push: { cartItems: productObj },
+//                                 $inc: { cartTotal: product.price }
+//                             }
+//                         ).then((response) => {
+//                             // Log success
+//                             console.log('Cart updated successfully');
+//                             resolve({ status: true });
+//                         }).catch((error) => {
+//                             // Log error
+//                             console.error('Error updating cart:', error);
+//                             reject(error);
+//                         });
+//                     }
+//                 } else {
+//                     const newCart = await Cart({
+//                         user: userId,
+//                         cartItems: productObj,
+//                         cartTotal: product.price,
+//                         category: product.category
+//                     });
+//                     await newCart.save().then((response) => {
+//                         // Log success
+//                         console.log('New cart created successfully');
+//                         resolve({ status: true });
+//                     }).catch((error) => {
+//                         // Log error
+//                         console.log(error)
+//                         reject(error);
+//                     });
+//                 }
+//             }).catch((error) => {
+//                 // Log error
+//                 console.error('Error finding cart:', error);
+//                 reject(error);
+//             });
+//         });
+//     } catch (error) {
+//         console.log(error.message);
+//         // Log error
+//         console.error('Error in try-catch block:', error);
+//         reject(error);
+//     }
+// };
 
 
 

@@ -34,7 +34,7 @@
               <span class="hide-menu">Home</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="home" aria-expanded="false">
+              <a class="sidebar-link" href="http://localhost:3000/admin/home" aria-expanded="false">
                 <span>
                   <i class="ti ti-layout-dashboard"></i>
                 </span>
@@ -46,7 +46,7 @@
               <span class="hide-menu">Product Management</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="Catogory" aria-expanded="false">
+              <a class="sidebar-link" href="http://localhost:3000/admin/Catogory" aria-expanded="false">
                 <span>
                   <i class="ti ti-article"></i>
                 </span>
@@ -54,7 +54,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="Productmmgmt" aria-expanded="false">
+              <a class="sidebar-link" href="http://localhost:3000/admin/Productmmgmt" aria-expanded="false">
                 <span>
                   <i class="ti ti-briefcase"></i>
                 </span>
@@ -62,7 +62,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="Usermanagement" aria-expanded="false">
+              <a class="sidebar-link" href="http://localhost:3000/admin/Usermanagement" aria-expanded="false">
                 <span>
                   <i class="ti ti-user"></i>
                 </span>
@@ -70,7 +70,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="Order-management" aria-expanded="false">
+              <a class="sidebar-link" href="http://localhost:3000/admin/Order-management" aria-expanded="false">
                 <span>
                   <i class="ti ti-file-description"></i>
                 </span>
@@ -170,13 +170,20 @@
                     </td>
                     <td>₹<%= order.items[0].total %></td>
                     <td>
-                        <% if (order.status === 'Shipped') { %>
-                            <span class="badge badge-success">Shipped</span>
-                        <% } else if (order.status === 'Pending') { %>
-                            <span class="badge badge-warning">Pending</span>
-                        <% } else { %>
-                            <span class="badge badge-danger">Cancelled</span>
-                        <% } %>
+                      <% if (order.status === 'Shipped') { %>
+                        <span class="badge badge-success">Shipped</span>
+                    <% } else if (order.status === 'Pending') { %>
+                        <span class="badge badge-warning">Pending</span>
+                    <% } else if (order.status === 'CANCELLED') { %>
+                        <span class="badge badge-danger">Cancelled</span>
+                    <% } else if (order.status === 'Return-Req') { %>
+                        <span class="badge badge-info">Return Request</span>
+                    <% } else if (order.status === 'Return Accepted') { %>
+                        <span class="badge badge-primary">Return Accepted</span>
+                    <% } else { %>
+                        <span class="badge badge-secondary"><%= order.status %></span>
+                    <% } %>
+                    
                     </td>
                     <td>
                         <a href="/admin/order-details/<%= order._id %>" class="btn btn-info">View Details</a>

@@ -1,6 +1,5 @@
-require('dotenv').config();
 const cartHelper=require('../Helper/cartHelper');
-const Cart=require(process.env.CartURL);
+const Cart=require('../Model/CartModel');
 const mongoose = require('mongoose');
 module.exports={
 

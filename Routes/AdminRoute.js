@@ -55,6 +55,7 @@ admin_route.get('/unblockuser/:id',auth.isLogin,adminControl.unblockuser)
 
 admin_route.get('/Order-management',auth.isLogin,adminControl.loadOrdermanagement)
 admin_route.get('/order-details/:id',auth.isLogin,adminControl.moredetailedorder);
+admin_route.post('/order-updatebyadmin',auth.isLogin,adminControl.updateOrderStatusByAdmin)
 
 
 module.exports=admin_route;

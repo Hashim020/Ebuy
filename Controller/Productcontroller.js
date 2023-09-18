@@ -1,11 +1,11 @@
-require('dotenv').config();
-const Category = require(process.env.CategoryURL);
-const Product = require(process.env.ProductURL);
+const Category = require('../Model/CatogoryModel');
+const Product = require('../Model/ProductModel');
 const path = require('path')
 
 
 const multer = require('multer');
 const { rest } = require('lodash');
+const { log } = require('console');
 
 
 const storage = multer.diskStorage({
@@ -109,12 +109,14 @@ const Loadprodutaddform= async(req,res)=>{
 const listprocuts=async (req,res,id)=>{
     try {
         id=req.params.id
+        if(id){
         const categories=await Category.findOne({_id:id},{name:1});
         const products=await Product.find({category:id,is_Listed:true});
         const categories1=await Category.find();
-
-        
         res.render("Productlist",{categories,products,categories1})
+
+    }        
+        
     } catch (error) {
         
     }
@@ -254,6 +256,35 @@ const viewproducts=async (req,res)=>{
 
 
 
+const searchproducts = async (req, res) => {
+    try {
+        
+        // Create a regular expression pattern for case-insensitive search
+        
+        const query = req.body.qeury;
+        const rgx = new RegExp(query,"gi")
+        const products = await Product.find({
+            name: { $regex: rgx }
+        });
+        const categories1= await Category.find()
+        const categories=await Category.find()
+        res.render('Productlist', { products,categories1,categories }); // Adjust 'searchResults' to your template name
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error'); // Send an error response
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -278,6 +309,7 @@ module.exports={
     relistproducts,
     producteditform,
     Proceedtoeditprdct,
-    viewproducts
+    viewproducts,
+    searchproducts,
 
 }

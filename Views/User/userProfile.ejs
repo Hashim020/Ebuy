@@ -1,4 +1,13 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<!-- JS links -->
+  <title>User Profile</title>
+</head>
+
+
 <section style="background-color: #eee;">
     <div class="container py-5">
       <div class="row">
@@ -72,40 +81,281 @@
         <div class="col-lg-8">
           <div class="card mb-4">
             <div class="card-body">
+              <!-- ========================================================================================= -->
+              <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Edit Profile</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Form for editing profile -->
+                            <form id="editProfileForm">
+                                <div class="mb-3">
+                                    <label for="editName" class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="editName" value="<%= userData.name %>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editEmail" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="editEmail" value="<%= userData.email %>">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editMobile" class="form-label">Mobile</label>
+                                    <input type="tel" class="form-control" id="editMobile" value="<%= userData.mobile %>">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="updateProfile()">Update</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+              <!-- ======================================================================================================= -->
+              <div class="text-end">
+                  <button type="button" data-bs-toggle="modal" data-bs-target="#editProfileModal" class="btn btn-primary">Edit Profile
+                  </button>
+              </div>
               <div class="row">
-                <div class="col-sm-3">
-                  <p class="mb-0">Full Name</p>
-                </div>
-                <div class="col-sm-9">
-                  <p class="text-muted mb-0"><%=userData.name%></p>
-                </div>
+                  <div class="col-sm-3">
+                      <p class="mb-0">Full Name:</p>
+                  </div>
+                  <div class="col-sm-9">
+                      <p class="text-muted mb-0"><%= userData.name %></p>
+                  </div>
               </div>
               <hr>
               <div class="row">
-                <div class="col-sm-3">
-                  <p class="mb-0">Email</p>
-                </div>
-                <div class="col-sm-9">
-                  <p class="text-muted mb-0"><%=userData.email%></p>
-                </div>
+                  <div class="col-sm-3">
+                      <p class="mb-0">Email:</p>
+                  </div>
+                  <div class="col-sm-9">
+                      <p class="text-muted mb-0"><%= userData.email %></p>
+                  </div>
               </div>
               <hr>
               <div class="row">
-                <div class="col-sm-3">
-                  <p class="mb-0">Mobile</p>
-                </div>
-                <div class="col-sm-9">
-                  <p class="text-muted mb-0"><%=userData.mobile%></p>
-                </div>
+                  <div class="col-sm-3">
+                      <p class="mb-0">Mobile:</p>
+                  </div>
+                  <div class="col-sm-9">
+                      <p class="text-muted mb-0"><%= userData.mobile %></p>
+                  </div>
               </div>
               <hr>
+              <div class="row mb-3">
+                <div class="col-sm-3">
+                    <p class="mb-0">Password</p>
+                </div>
+                <div class="col-sm-7">
+                    <p class="text-muted mb-0">*********</p>
+                </div>
+                <div class="col-sm-2 text-end">
+                    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editPasswordModal">
+                        Change PW
 
-              </div>
+                    </button>
+                </div>
+            </div>            
+            <hr>
+          </div>
+<!-- ============================================= change password modal================================================================================================== -->
+<div class="modal fade" id="editPasswordModal" tabindex="-1" aria-labelledby="editPasswordModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="editPasswordModalLabel">Edit Password</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <!-- Form for editing password -->
+              <form id="editPasswordForm">
+                  <div class="mb-3">
+                      <label for="oldPassword" class="form-label">Old Password</label>
+                      <input type="password" class="form-control" id="oldPassword" required>
+                  </div>
+                  <div class="mb-3">
+                      <label for="newPassword" class="form-label">New Password</label>
+                      <input type="password" class="form-control" id="newPassword" required>
+                  </div>
+                  <div class="mb-3">
+                      <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                      <input type="password" class="form-control" id="confirmPassword" required>
+                  </div>
+              </form>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" onclick="updatePassword()">Save Changes</button>
+          </div>
+      </div>
+  </div>
+</div>
+<!-- =============================================================================================================================================================== -->
             </div>
           </div>
         </div>
       </div>
     </div>
+
+
+    <script>
+
+function validateEmail(email) {
+    // Regular expression for validating email addresses
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function validateMobile(mobile) {
+    // Regular expression for validating mobile numbers (assuming 10-digit format)
+    const mobileRegex = /^\d{10}$/;
+    return mobileRegex.test(mobile);
+}
+
+
+async function updateProfile() {
+    try {
+        var name = document.getElementById('editName').value;
+        var email = document.getElementById('editEmail').value;
+        var mobile = document.getElementById('editMobile').value;
+        var modal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+
+        // Validate email
+        if (!validateEmail(email)) {
+            swal.fire("Error", "Please enter a valid email address", "error");
+            return;
+        }
+
+        // Validate mobile number
+        if (!validateMobile(mobile)) {
+            swal.fire("Error", "Please enter a valid 10-digit mobile number", "error");
+            return;
+        }
+
+        // Prepare the data to send
+        var data = {
+            name: name,
+            email: email,
+            mobile: mobile
+        };
+
+        // Send the POST request using fetch
+        const response = await fetch('/update-profile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const responseData = await response.json();
+        console.log('Success:', responseData);
+
+        if (responseData) {
+            // Show success SweetAlert
+            await swal.fire({
+                title: "Success!",
+                text: "Profile updated successfully!",
+                icon: "success",
+                timer: 1300,
+                showConfirmButton: false
+            });
+
+            // Close the modal
+            modal.hide();
+
+            // Reload the page after a successful update
+            window.location.reload();
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+
+// ==============================================update password=================================================================================
+
+async function updatePassword() {
+  try {
+    var oldPassword = document.getElementById('oldPassword').value;
+    var newPassword = document.getElementById('newPassword').value;
+    var confirmPassword = document.getElementById('confirmPassword').value;
+    var modal = new bootstrap.Modal(document.getElementById('editPasswordModal'));
+
+    if (newPassword !== confirmPassword) {
+      swal.fire({
+        title: "Error",
+        text: "New password and confirmation password do not match!",
+        icon: "error"
+      });
+      return;
+    }
+
+    if (confirmPassword.length < 6 || newPassword.length < 6) {
+      swal.fire("Error", "New password must be at least 6 characters long", "error");
+      return;
+    }
+
+    // Prepare data for the request
+    var data = {
+      oldPassword: oldPassword,
+      newPassword: newPassword
+    };
+
+    const response = await fetch('/update-password', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    const responseData = await response.json();
+    console.log('Response Data:', responseData);
+    if(responseData.success){
+      await swal.fire({
+        title: "Success!",
+        text: "Password updated successfully",
+        icon: "success",
+        timer: 1300,
+        showConfirmButton: false
+      });
+      window.location.reload();
+    } else if(responseData.success===false) {
+      await swal.fire({
+        title: "Error",
+        text: responseData.message,
+        icon: "error",
+        timer: 1300,
+      });
+    }
+
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+
+
+
+    // ============================================================================================================================================================
+  </script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  
+  <!-- SweetAlert CSS and JS (add these after Bootstrap JS) -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
   </section>

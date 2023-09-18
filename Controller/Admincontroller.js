@@ -1,8 +1,7 @@
-require('dotenv').config();
-const User = require(process.env.UserURL);
-const Order= require(process.env.OrderURL);
+const User = require('../Model/userModel');
+const Order= require('../Model/OrderModel');
 const bcrypt = require('bcrypt');
-const Product= require(process.env.ProductURL);
+const Product= require('../Model/ProductModel');
 const express = require('express');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
@@ -134,13 +133,27 @@ const moredetailedorder= async(req,res)=>{
 }
 
 
-const updateorderbyadmin =async (req,res)=>{
+const updateOrderStatusByAdmin = async (req, res) => {
     try {
-        
+        const { status, orderId } = req.body;
+
+        const updatedOrder = await Order.findOneAndUpdate(
+            { _id: orderId },
+            { status: status },
+            { new: true }
+        );
+
+        if (!updatedOrder) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+
+        res.json({ success: true, message: 'Order status updated successfully' });
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error updating status' });
     }
 }
+
 
 
 
@@ -161,5 +174,5 @@ const updateorderbyadmin =async (req,res)=>{
     adminlogout,
     loadOrdermanagement,
     moredetailedorder,
-    updateorderbyadmin
+    updateOrderStatusByAdmin
  }

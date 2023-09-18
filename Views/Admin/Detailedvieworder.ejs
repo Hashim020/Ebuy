@@ -2,9 +2,46 @@
 <html lang="en">
 
 <head>
+  <link href="
+https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.min.css
+" rel="stylesheet">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Category Management</title>
+  <title>Order Management</title>
+  <style>
+    .order-status {
+    font-weight: bold;
+}
+
+.order-status.Pending {
+    color: blue;
+}
+
+.order-status.Processing {
+    color: blue;
+}
+
+.order-status.Shipped {
+    color: blue;
+}
+
+.order-status.Delivered {
+    color: green;
+}
+
+.order-status.CANCELLED {
+    color: red;
+}
+
+.order-status.Return-Req {
+    color: blue;
+}
+
+.order-status.Return-Accepted {
+    color: blue;
+}
+
+  </style>
   <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
   <link rel="stylesheet" href="../assets/css/styles.min.css" />
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -34,7 +71,7 @@
               <span class="hide-menu">Home</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="home" aria-expanded="false">
+              <a class="sidebar-link" href="http://localhost:3000/admin/home" aria-expanded="false">
                 <span>
                   <i class="ti ti-layout-dashboard"></i>
                 </span>
@@ -46,7 +83,7 @@
               <span class="hide-menu">Product Management</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="Catogory" aria-expanded="false">
+              <a class="sidebar-link" href="http://localhost:3000/admin/Catogory" aria-expanded="false">
                 <span>
                   <i class="ti ti-article"></i>
                 </span>
@@ -54,7 +91,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="Productmmgmt" aria-expanded="false">
+              <a class="sidebar-link" href="http://localhost:3000/admin/Productmmgmt" aria-expanded="false">
                 <span>
                   <i class="ti ti-briefcase"></i>
                 </span>
@@ -62,7 +99,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="Usermanagement" aria-expanded="false">
+              <a class="sidebar-link" href="http://localhost:3000/admin/Usermanagement" aria-expanded="false">
                 <span>
                   <i class="ti ti-user"></i>
                 </span>
@@ -70,7 +107,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="Order-management" aria-expanded="false">
+              <a class="sidebar-link" href="http://localhost:3000/admin/Order-management" aria-expanded="false">
                 <span>
                   <i class="ti ti-file-description"></i>
                 </span>
@@ -143,109 +180,147 @@
       <!--  Header End -->
 <!-- ===========Start of Catogory card=================================================================================================================== -->
 <div class="container mt-4">
-    <hr>
-    <!-- Display username and shipping address only once for each order -->
-    <div class="row mt-4">
-        <!-- Shipping Address Box -->
-        <div class="col-md-12">
-            <h5 class="text-center">Username: <%= order.user.name %></h5>
-        </div>
-        <div class="col-md-12 mb-3">
-            <div class="border p-3">
-                <h5>Shipping Address</h5>
-                <p><strong>Name: <%= order.user.name %></strong></p>
-                <!-- Replace order.userAddress with order.address -->
-                <p><strong>Address: <%= order.address.address %></strong></p>
-                <p><strong>City: <%= order.address.city %></strong></p>
-                <p><strong>State: <%= order.address.state %></strong></p>
-                <p><strong>Pin Code: <%= order.address.pincode %></strong></p>
-            </div>
-        </div>
-    </div>
-    <div class="text-start">
-        <p>Payment Method: <strong><%= order.paymentMethod %></strong> </p>
-    </div>
-    <div class="text-start"> 
-        <p>Order Status : <strong> <%= order.status%></strong></p>  
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <select class="form-control" id="statusDropdown">
-                    <option value="Pending">Pending</option>
-                    <option value="Processing">Processing</option>
-                    <option value="Shipped">Shipped</option>
-                    <option value="Delivered">Delivered</option>
-                    <option value="CANCELLED">Cancelled</option>
-                    <option value="Return-Req">Return Request</option>
-                    <option value="Return Accepted">Return Accepted</option>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <button class="btn btn-primary" onclick="updateStatus()">Update</button>
-                    <input type="hidden" id="orderId" value="<%=order._id%>">
-                </div>
-            </div>
-        </div> 
-    </div>
-    
+  <hr>
 
-    <!-- Loop through each item -->
-    <% order.items.forEach((item, index) => { %>
-        <!-- Product Details Box -->
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <table class="table table-bordered">
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div class="ms-3">
-                                    <h6><%= item.productId.name %></h6>
-                                </div>
-                            </td>
-                            <td><%= item.quantity %></td>
-                            <td>₹<%= item.total %></td>
-                            <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    <% }) %>
+  <!-- Display username and shipping address only once for each order -->
+  <div class="row mt-4">
+      <div class="col-md-12">
+          <h5 class="text-center">Username: <%= order.user.name %></h5>
+      </div>
 
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <a href="javascript:history.back()" class="btn btn-primary">Go Back</a>
+      <!-- Shipping Address Box -->
+      <div class="col-md-12 mb-3">
+          <div class="border p-3">
+              <h5>Shipping Address</h5>
+              <p><strong>Name: <%= order.user.name %></strong></p>
+              <p><strong>Address: <%= order.address.address %></strong></p>
+              <p><strong>City: <%= order.address.city %></strong></p>
+              <p><strong>State: <%= order.address.state %></strong></p>
+              <p><strong>Pin Code: <%= order.address.pincode %></strong></p>
+          </div>
+      </div>
+  </div>
+
+  <!-- Payment Method and Order Status -->
+  <div class="row mt-4">
+    <div class="col-md-12">
+        <div class="text-start">
+            <p>Payment Method: <strong><%= order.paymentMethod %></strong></p>
+            <p class="order-status <%= order.status %>">
+                Order Status: <strong><%= order.status %></strong>
+            </p>
         </div>
     </div>
 </div>
 
-<!-- ===================================================================================================================================== -->
-<script>
-    function updateStatus() {
-        const selectedStatus = document.getElementById('statusDropdown').value;
 
-        // Make an AJAX POST request
-        fetch('/admin-updateorder', {
+  <!-- Order Status Update Section -->
+  <div class="row mt-4">
+      <div class="col-md-6">
+          <select class="form-control form-control-select-arrow" id="statusDropdown">
+              <option value="Pending">Pending</option>
+              <option value="Processing">Processing</option>
+              <option value="Shipped">Shipped</option>
+              <option value="Delivered">Delivered</option>
+              <option value="CANCELLED">Cancelled</option>
+              <option value="Return-Req">Return Request</option>
+              <option value="Return Accepted">Return Accepted</option>
+          </select>
+      </div>
+      <div class="col-md-6">
+          <button type="button" onclick="updateStatus(event)" class="btn btn-primary">Update</button>
+          <input type="hidden" id="orderId" value="<%= order._id %>">
+      </div>
+  </div>
+
+  <!-- Loop through each item -->
+  <% order.items.forEach((item, index) => { %>
+      <div class="row mt-4">
+          <div class="col-md-12">
+              <table class="table table-bordered">
+                  <tbody>
+                      <tr>
+                          <td>
+                              <div class="ms-3">
+                                  <h6><%= item.productId.name %></h6>
+                              </div>
+                          </td>
+                          <td><%= item.quantity %></td>
+                          <td>₹<%= item.total %></td>
+                          <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+      </div>
+  <% }) %>
+
+  <!-- Go Back Button -->
+  <div class="row mt-4">
+      <div class="col-md-12">
+          <a href="javascript:history.back()" class="btn btn-primary">Go Back</a>
+      </div>
+  </div>
+</div>
+
+<script>
+  async function updateStatus(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    // Get the selected status from the dropdown
+    var status = document.getElementById('statusDropdown').value;
+
+    // Get the order ID
+    var orderId = document.getElementById('orderId').value;
+
+    console.log('Selected Status:', status);
+    console.log('Order ID:', orderId);
+
+    // Prepare the data to send
+    var data = {
+        status: status,
+        orderId: orderId
+    };
+
+    try {
+        // Send the POST request using fetch
+        const response = await fetch('/admin/order-updatebyadmin', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ status: selectedStatus }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
+            body: JSON.stringify(data)
         });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const responseData = await response.json();
+        console.log('Success:', responseData);
+
+        // Show a SweetAlert after a successful update
+        Swal.fire({
+            icon: 'success',
+            title: 'Update Successful',
+            text: 'The order status has been updated.',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.reload();
+            }
+        });
+    } catch (error) {
+        console.error('Error:', error);
     }
-</script> 
-<script src="../assets/libs/jquery/dist/jquery.min.js"></script>
-  <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../assets/js/sidebarmenu.js"></script>
-  <script src="../assets/js/app.min.js"></script>
-  <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+}
+
+
+</script>
+<script src="
+https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.all.min.js
+"></script>
 </body>
 
 </html>

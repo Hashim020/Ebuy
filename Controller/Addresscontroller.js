@@ -1,6 +1,5 @@
-require('dotenv').config();
-const User = require(process.env.UserURL);
-const Address=require(process.env.AddressURL)
+const User = require('../Model/userModel')
+const Address=require('../Model/AddressModel')
 
 
 
@@ -20,7 +19,6 @@ const Loadaddressmngmnt= async (req,res)=>{
         console.log(error);
     }
 };
-
 
 
 

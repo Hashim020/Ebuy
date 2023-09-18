@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 
-const User = require(process.env.UserURL)
+const User = require('../Model/userModel')
 const bcrypt = require('bcrypt')
 
 

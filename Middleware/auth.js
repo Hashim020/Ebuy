@@ -29,10 +29,22 @@ const isLogout= async(req,res,next)=>{
     }
 }
 
+const requireSignIn= async(req, res, next) =>{
+    if (req.session.user_id) {
+        // User is signed in, continue with the request
+        next();
+    } else {
+        // User is not signed in, redirect to login page or take other action
+        res.redirect('/login'); // Replace '/login' with the desired URL
+    }
+}
+
+
 
 
 module.exports={
     isLogin,
     isLogout,
+    requireSignIn
 
 }
