@@ -19,6 +19,8 @@ var instance = new Razorpay({
 
 
 module.exports={
+
+
     generateRazorpay : async (orderId, total) => {
         return new Promise((resolve, reject) => {
             const options = {
@@ -37,4 +39,39 @@ module.exports={
             });
         });
     },
+
+    Paymentverify: async (details) => {
+        console.log(details.body);
+    
+        try {
+            const crypto = require('crypto');
+            let hmac = crypto.createHmac('sha256', secretid);
+            hmac.update(details.body.response.razorpay_order_id + '|' + details.body.response.razorpay_payment_id);
+            hmac = hmac.digest('hex');
+    
+            if (hmac == details.body.response.razorpay_signature) {
+                console.log('success payment');
+                const orderId = details.body.responseObj.receipt;
+                const paymentStatus = 'Paid'; // Assuming this is how you indicate a successful payment
+                await Order.findByIdAndUpdate(orderId, { paymentStatus });
+                return 'HMAC matches'; // Send a success message
+            } else {
+                const orderId = details.body.responseObj.receipt;
+                const paymentStatus = 'Payment Failed'; // Assuming this is how you indicate a failed payment
+                await Order.findByIdAndUpdate(orderId, { paymentStatus });
+                throw new Error('HMAC does not match'); // Send an error message
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
+    
+    
+    
+    
+    
+
+   
 }
+
+

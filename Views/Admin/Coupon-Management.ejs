@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ebuy Admin</title>
+    <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+    <link rel="stylesheet" href="../assets/css/styles.min.css" />
+</head>
+
+<body>
+    <!--  Body Wrapper -->
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+        data-sidebar-position="fixed" data-header-position="fixed">
+        <!-- Sidebar Start -->
+        <aside class="left-sidebar">
+            <!-- Sidebar scroll-->
+            <div>
+                <div class="brand-logo d-flex align-items-center justify-content-between">
+                    <a href="/admin" class="text-nowrap logo-img">
+                        <img src="../assets/images/logos/dark-logo.svg" width="180" alt="" />
+                    </a>
+                    <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+                        <i class="ti ti-x fs-8"></i>
+                    </div>
+                </div>
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+                    <ul id="sidebarnav">
+                        <li class="nav-small-cap">
+                            <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                            <span class="hide-menu">Home</span>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="home" aria-expanded="false">
+                                <span>
+                                    <i class="ti ti-layout-dashboard"></i>
+                                </span>
+                                <span class="hide-menu">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-small-cap">
+                            <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                            <span class="hide-menu">UI COMPONENTS</span>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="Catogory" aria-expanded="false">
+                                <span>
+                                    <i class="ti ti-article"></i>
+                                </span>
+                                <span class="hide-menu">Product Category</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="Productmmgmt" aria-expanded="false">
+                                <span>
+                                    <i class="ti ti-briefcase"></i>
+                                </span>
+                                <span class="hide-menu">Product Management</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="Usermanagement" aria-expanded="false">
+                                <span>
+                                    <i class="ti ti-user"></i>
+                                </span>
+                                <span class="hide-menu">User Management</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link Active" href="Order-management" aria-expanded="false">
+                                <span>
+                                    <i class="ti ti-file-description"></i>
+                                </span>
+                                <span class="hide-menu">Order Management</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="Coupon-Management" aria-expanded="false">
+                                <span>
+                                    <i class="ti ti-typography"></i>
+                                </span>
+                                <span class="hide-menu">Coupon Management</span>
+                            </a>
+                        </li>
+                </nav>
+                <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+        </aside>
+        <!--  Sidebar End -->
+        <!--  Main wrapper -->
+        <div class="body-wrapper">
+            <!--  Header Start -->
+            <header class="app-header">
+                <nav class="navbar navbar-expand-lg navbar-light">
+                    <ul class="navbar-nav">
+                        <li class="nav-item d-block d-xl-none">
+                            <a class="nav-link sidebartoggler nav-icon-hover" id="headerCollapse"
+                                href="javascript:void(0)">
+                                <i class="ti ti-menu-2"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link nav-icon-hover" href="javascript:void(0)">
+                                <i class="ti ti-bell-ringing"></i>
+                                <div class="notification bg-primary rounded-circle"></div>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
+                        <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img src="../assets/images/profile/user-1.jpg" alt="" width="35" height="35"
+                                        class="rounded-circle">
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up"
+                                    aria-labelledby="drop2">
+                                    <div class="message-body">
+                                        <a href="javascript:void(0)"
+                                            class="d-flex align-items-center gap-2 dropdown-item">
+                                            <i class="ti ti-user fs-6"></i>
+                                            <p class="mb-0 fs-3">My Profile</p>
+                                        </a>
+                                        <a href="javascript:void(0)"
+                                            class="d-flex align-items-center gap-2 dropdown-item">
+                                            <i class="ti ti-mail fs-6"></i>
+                                            <p class="mb-0 fs-3">My Account</p>
+                                        </a>
+                                        <a href="javascript:void(0)"
+                                            class="d-flex align-items-center gap-2 dropdown-item">
+                                            <i class="ti ti-list-check fs-6"></i>
+                                            <p class="mb-0 fs-3">My Task</p>
+                                        </a>
+                                        <a href="adminlogout"
+                                            class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </header>
+            <!--  Header End -->
+            <div class="container-fluid">
+                <!-- Button to trigger modal -->
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#couponModal">
+                    Add Coupon
+                </button>
+                <div class="container mt-5">
+                    <h1>Coupon Management</h1>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Code</th>
+                                <th>Discount (%)</th>
+                                <th>Status</th>
+                                <th>Date of Start</th>
+                                <th>Expiration Date</th>
+                                <th>Minimum Purchase</th>
+                                <th>Maximum Purchase</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% coupons.forEach(coupon => { %>
+                                <tr>
+                                    <td><button class="btn btn-primary btn-sm edit-btn">Edit</button><span class="coupon-id"><%= coupon._id %></span></td>
+                                    <td><%= coupon.code %></td>
+                                    <td><%= coupon.discount %></td>
+                                    <td><%= coupon.status %></td>
+                                    <td><%= coupon.dateOfStart.toLocaleDateString() %></td>
+                                    <td><%= coupon.expirationDate.toLocaleDateString() %></td>
+                                    <td><%= coupon.minimumPurchase.toLocaleString() %></td>
+                                    <td><%= coupon.maximumPurchase === null ? 'None' : coupon.maximumPurchase.toLocaleString() %></td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- ============================Edit modal======================================================= -->
+            <div class="modal fade" id="editCouponModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Coupon Details</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>ID: <span id="modalCouponId"></span></p>
+                            <p>Code: <span id="modalCouponCode"></span></p>
+                            <p>Discount (%): <span id="modalCouponDiscount"></span></p>
+                            <p>Status: <span id="modalCouponStatus"></span></p>
+                            <p>Date of Start: <span id="modalCouponDateOfStart"></span></p>
+                            <p>Expiration Date: <span id="modalCouponExpirationDate"></span></p>
+                            <p>Minimum Purchase: <span id="modalCouponMinimumPurchase"></span></p>
+                            <p>Maximum Purchase: <span id="modalCouponMaximumPurchase"></span></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ======================modal================================-->
+
+            <!-- Modal -->
+            <div class="modal fade" id="couponModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Coupon Details</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="form-group">
+                                    <label for="code">Code</label>
+                                    <input type="text" class="form-control" id="code" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="discount">Discount (%)</label>
+                                    <input type="number" class="form-control" id="discount" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="status">Status</label>
+                                    <select class="form-control" id="status">
+                                        <option value="Active">Active</option>
+                                        <option value="Expired">Expired</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="dateOfStart">Date of Start</label>
+                                    <input type="date" class="form-control" id="dateOfStart" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="expirationDate">Expiration Date</label>
+                                    <input type="date" class="form-control" id="expirationDate" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="minimumPurchase">Minimum Purchase</label>
+                                    <input type="number" class="form-control" id="minimumPurchase" value="2000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="maximumPurchase">Maximum Purchase</label>
+                                    <input type="number" class="form-control" id="maximumPurchase" value="50000">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="saveCoupon()">Save Coupon</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.edit-btn').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var id = this.parentElement.querySelector('.coupon-id').textContent;
+                    var code = this.parentElement.parentElement.querySelector('.coupon-code').textContent;
+                    var discount = this.parentElement.parentElement.querySelector('.coupon-discount').textContent;
+                    var status = this.parentElement.parentElement.querySelector('.coupon-status').textContent;
+                    var dateOfStart = this.parentElement.parentElement.querySelector('.coupon-dateOfStart').textContent;
+                    var expirationDate = this.parentElement.parentElement.querySelector('.coupon-expirationDate').textContent;
+                    var minimumPurchase = this.parentElement.parentElement.querySelector('.coupon-minimumPurchase').textContent;
+                    var maximumPurchase = this.parentElement.parentElement.querySelector('.coupon-maximumPurchase').textContent;
+        
+                    document.querySelector('#modalCouponId').textContent = id;
+                    document.querySelector('#modalCouponCode').textContent = code;
+                    document.querySelector('#modalCouponDiscount').textContent = discount;
+                    document.querySelector('#modalCouponStatus').textContent = status;
+                    document.querySelector('#modalCouponDateOfStart').textContent = dateOfStart;
+                    document.querySelector('#modalCouponExpirationDate').textContent = expirationDate;
+                    document.querySelector('#modalCouponMinimumPurchase').textContent = minimumPurchase;
+                    document.querySelector('#modalCouponMaximumPurchase').textContent = maximumPurchase;
+        
+                    var editCouponModal = new bootstrap.Modal(document.getElementById('editCouponModal'));
+                    editCouponModal.show();
+                });
+            });
+        });
+        </script>
+        
+    <script>
+       async function saveCoupon() {
+            // You can use JavaScript to retrieve the values from the form and save them to your database.
+            // For example:
+            const code = document.getElementById('code').value;
+            const discount = parseFloat(document.getElementById('discount').value);
+            const status = document.getElementById('status').value;
+            const dateOfStart = document.getElementById('dateOfStart').value;
+            const expirationDate = document.getElementById('expirationDate').value;
+            const minimumPurchase = parseFloat(document.getElementById('minimumPurchase').value);
+            const maximumPurchase = parseFloat(document.getElementById('maximumPurchase').value);
+            if (code.length > 6) {
+                if (discount > 0) {
+                    if (dateOfStart) {
+                        fetch('save_coupon', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                code,
+                                discount,
+                                status,
+                                dateOfStart,
+                                expirationDate,
+                                minimumPurchase,
+                                maximumPurchase,
+                            }),
+                        })
+                            .then(response => response.json())
+                            .then (data => {
+                                // Handle the response from your server
+                                if (data.success === true) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Data Saved',
+                                        text: 'Coupon Created Successfully',
+                                        confirmButtonText: 'OK',
+                                        Timeout:1000,
+                                    });
+                                    window.location.href='http://localhost:3000/admin/Coupon-Management'
+                                }
+
+                            })
+                            .catch((error) => {
+                                console.error('Error:', error);
+                            });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Enter Start Date',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Enter Discount',
+                        confirmButtonText: 'OK'
+                    });
+
+                }
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Code should be 6 character',
+                    confirmButtonText: 'OK'
+                });
+            }
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+    <!-- Bootstrap JS (including Popper.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+
+</html>

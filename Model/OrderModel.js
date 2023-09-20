@@ -26,7 +26,6 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         required: true,
       },
-      
     },
   ],
   total: {
@@ -42,11 +41,18 @@ const orderSchema = new mongoose.Schema({
     enum: ['Pending', 'Processing', 'Shipped', 'Delivered','CANCELLED',"Return-Req",'Return Accepted'],
     default: 'Pending',
   },
-  
- 
   subTotal:{
     type: Number,
     required: true,
+  },
+  paymentStatus: {
+    type: String,
+    enum: ['Pending', 'Paid', 'Payment Failed','Unpaid'],
+    default: 'Unpaid',
+  },
+  paymentId: {
+    type: String, // Assuming your payment ID is a string, you can adjust the type accordingly
+    required: false, // Adjust as per your requirements
   },
   createdAt: {
     type: Date,

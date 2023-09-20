@@ -11,6 +11,7 @@ const ProductControl = require('../Controller/Productcontroller')
 const cartcontroller=require('../Controller/Cartcontroller')
 const addresscontroller=require('../Controller/Addresscontroller')
 const auth = require('../Middleware/auth');
+const userHelper=require('../Helper/userHelper');
 user_route.use(session({
     secret: 'your-secret-key',
     resave: false,
@@ -65,9 +66,23 @@ user_route.get('/Checkout',userController.loadcheckout);
 user_route.get('/place-order-thankyou',userController.thankyouorderplaced)
 user_route.post('/place-order',userController.orderplace);
 user_route.post('/cancel_order',userController.cancelOrder);
-user_route.post('/verify-payment',(req,res)=>{
-    console.log(req.body);
+user_route.post('/verify-payment', (req, res) => {
+    userHelper.Paymentverify(req)
+        .then((message) => {
+            if (message === 'HMAC matches') {
+                console.log("HMAC matches");
+                res.json({ success: true });
+            } else {
+                console.log("HMAC does not match");
+                res.json({ success: false });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            res.status(500).json({ success: false, message: 'Error verifying payment' });
+        });
 });
+
 
 
 

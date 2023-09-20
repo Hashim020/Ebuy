@@ -5,7 +5,7 @@ const Product= require('../Model/ProductModel');
 const express = require('express');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
-
+const Coupon=require('../Model/CouponModel');
 
 
 const securePassword = async(password)=>{
@@ -156,6 +156,41 @@ const updateOrderStatusByAdmin = async (req, res) => {
 
 
 
+const GetCouponManagement = async (req,res)=>{
+    try {
+        const coupons= await Coupon.find();
+        res.render('Coupon-Management',{coupons})
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+const postCoupon = async (req, res) => {
+    try {
+        const { code, discount, status, dateOfStart, expirationDate, minimumPurchase, maximumPurchase } = req.body;
+        const newCoupon = new Coupon({
+            code,
+            discount,
+            status,
+            dateOfStart,
+            expirationDate,
+            minimumPurchase,
+            maximumPurchase
+        });
+
+        await newCoupon.save(); // Save the new coupon to the database
+
+        res.json({ success: true, message: 'Coupon saved successfully.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'An error occurred while saving the coupon.' });
+    }
+};
+
+
+
+
 
 
 
@@ -174,5 +209,7 @@ const updateOrderStatusByAdmin = async (req, res) => {
     adminlogout,
     loadOrdermanagement,
     moredetailedorder,
-    updateOrderStatusByAdmin
+    updateOrderStatusByAdmin,
+    GetCouponManagement,
+    postCoupon
  }

@@ -307,7 +307,7 @@
 								<input type="radio" name="payment" id="payment-3">
 								<label for="payment-3">
 									<span></span>
-									Paypal System
+									Wallet
 								</label>
 								<div class="caption">
 									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
@@ -511,8 +511,8 @@
 									if (jsonResponse.success) {
 										// Redirect to the thank-you page
 										window.location.href = 'http://localhost:3000/place-order-thankyou';
-									} else if(jsonResponse.onlinepayment) {
-									 Razorpaypayment(jsonResponse);
+									} else if (jsonResponse.onlinepayment) {
+										Razorpaypayment(jsonResponse);
 									}
 								} else {
 									// Handle non-OK response (e.g., server error)
@@ -548,9 +548,10 @@
 					"image": "https://example.com/your_logo",
 					"order_id": responseObj.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
 					"handler": function (response) {
-						alert(response.razorpay_payment_id);
-						alert(response.razorpay_order_id);
-						alert(response.razorpay_signature);
+						// alert(response.razorpay_payment_id);
+						// alert(response.razorpay_order_id);
+						// alert(response.razorpay_signature);
+						verifypayment(response, responseObj);
 					},
 					"prefill": {
 						"name": "Hashim.M.A",
@@ -563,24 +564,40 @@
 					"theme": {
 						"color": "#3399cc"
 					}
-					
+
 				}
 
 				var rzp1 = new Razorpay(options);
 				rzp1.open();
 
-				
+
+			};
+
+
+
+			function verifypayment(response, responseObj) {
+				fetch('verify-payment', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						response,
+						responseObj
+					})
+				})
+					.then(response => {
+						if (response) {
+							window.location.href = 'http://localhost:3000/place-order-thankyou';
+						}else if(response.success===false){
+							alert='payment failed '
+						}
+						return response.json();
+					})
+					.catch(error => {
+						console.error('Error:', error);
+					});
 			}
-			// function vefifypayment(payment,order){
-			// 		$ajax({
-			// 			method:'post',
-			// 			url:'/verify-payment',
-			// 			data:{
-			// 				payment,
-			// 				order
-			// 			}
-			// 		})
-			// 	}
 
 
 		</script>
