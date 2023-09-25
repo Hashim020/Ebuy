@@ -167,7 +167,7 @@ const GetCouponManagement = async (req,res)=>{
 
 
 const postCoupon = async (req, res) => {
-    try {
+    try {   
         const { code, discount, status, dateOfStart, expirationDate, minimumPurchase, maximumPurchase } = req.body;
         const newCoupon = new Coupon({
             code,

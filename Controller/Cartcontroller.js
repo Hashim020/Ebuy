@@ -64,10 +64,17 @@ module.exports={
                 }
               }
             ]);
-            
-            res.render("cart", { cart, user, count, cartTotal });
+            if(req.session){
+              var userId=req.session.user_id
+              var cart1=await Cart.findOne({user:userId});
+            }
+            var totalQuantity = 0;
+            if(cart1){
+              cart1.cartItems.map(item => totalQuantity += item.quantity);
+            }
+            res.render("cart", { cart, user, count, cartTotal,cart1,totalQuantity });
           } else {
-            res.render("cart", { user, count, cartTotal, cart: [] });
+            res.render("cart", { user, count, cartTotal, cart: [],totalQuantity });
           }
             }else{
                 res.redirect('/login')

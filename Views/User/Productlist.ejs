@@ -466,7 +466,10 @@
                     text: 'Your Product has been added to Cart',
                     icon: 'success',
                     timer: 5000
-                });
+                }).then(() => {
+                window.location.reload();
+            });
+				
             } else if (response.status === false) {
                 Swal.fire({
                     title: 'Error',

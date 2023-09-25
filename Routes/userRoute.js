@@ -63,6 +63,7 @@ user_route.delete('/deleteProduct',cartcontroller.deleteProduct);
 
 
 user_route.get('/Checkout',userController.loadcheckout);
+user_route.post('/Applycoupen',userController.Applycoupen);
 user_route.get('/place-order-thankyou',userController.thankyouorderplaced)
 user_route.post('/place-order',userController.orderplace);
 user_route.post('/cancel_order',userController.cancelOrder);

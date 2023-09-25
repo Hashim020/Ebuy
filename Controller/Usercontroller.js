@@ -5,10 +5,12 @@ const Address = require('../Model/AddressModel');
 const Cart = require('../Model/CartModel');
 const Order = require('../Model/OrderModel');
 const Product = require('../Model/ProductModel');
+const Coupon= require('../Model/CouponModel');
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const Razorpay = require('razorpay');
 const userHelper = require('../Helper/userHelper');
+const { v4: uuidv4 } = require('uuid');
 // const { response } = require('../Routes/userRoute');
 
 
@@ -32,9 +34,17 @@ const securePassword = async (password) => {
 
 const loadHome = async (req, res) => {
   try {
-    const categories = await Category.find().sort({ name: 1 })
-    // console.log(catagories)
-    res.render("main", { categories })
+    if (req.session) {
+      var userId = req.session.user_id
+      var cart = await Cart.findOne({ user: userId });
+      var user = await User.findById(userId);
+    }
+    const categories = await Category.find().sort({ name: 1 });
+    let totalQuantity = 0;
+    if (cart) {
+      cart.cartItems.map(item => totalQuantity += item.quantity);
+    }
+    res.render("main", { categories, user, totalQuantity })
   } catch (error) {
     console.log(error.message);
   }
@@ -295,6 +305,7 @@ const loadcheckout = async (req, res) => {
     const user = req.session.user_id
     const categories = await Category.find()
     const address = await Address.find({ userId: id });
+    const coupons= await Coupon.find();
     let cartTotal = 0;
 
     const total = await Cart.findOne({ user: user });
@@ -333,10 +344,29 @@ const loadcheckout = async (req, res) => {
         }
       }
     ]);
-    res.render('checkout', { categories, address, cart, cartTotal })
+    if (req.session) {
+      var userId = req.session.user_id
+      var cart1 = await Cart.findOne({ user: userId });
+    }
+    let totalQuantity = 0;
+    if (cart1) {
+      cart1.cartItems.map(item => totalQuantity += item.quantity);
+    }
+    res.render('checkout', { categories, address, cart, cartTotal, totalQuantity,user,coupons })
   } catch (error) {
 
     console.log(error);
+  }
+}
+
+
+const Applycoupen= async(req,res)=>{
+  try {
+    console.log(req.body);
+    
+    res.json({success:true})
+  } catch (error) {
+    
   }
 }
 
@@ -399,8 +429,13 @@ const orderplace = async (req, res) => {
     const subTotal = items.reduce((total, item) => total + item.total, 0);
     const total = subTotal; // You can add shipping costs or taxes if needed
 
+    const generateOrderID = () => {
+      return uuidv4(); // Generates a unique UUID
+    };
+    const orderID = 'ORD' + generateOrderID();
     // Create the order document
     const newOrder = new Order({
+      OrderId: orderID,
       user: userId,
       address: addressId,
       items: items,
@@ -425,8 +460,8 @@ const orderplace = async (req, res) => {
       const response = await userHelper.generateRazorpay(orderId, total);
       const response1String = JSON.stringify(response); // Convert the response to a JSON string
       return res.json({ response: response1String, onlinepayment: true });
-    }else if(paymentMethod==='Wallet'){
-      
+    } else if (paymentMethod === 'Wallet') {
+
     }
   } catch (error) {
     console.error(error.message);
@@ -441,7 +476,16 @@ const orderplace = async (req, res) => {
 
 const thankyouorderplaced = async (req, res) => {
   try {
-    res.render('thankyou');
+    if (req.session) {
+      var userId = req.session.user_id
+      var cart1 = await Cart.findOne({ user: userId });
+      var user=req.session.user_id
+    }
+    let totalQuantity = 0;
+    if (cart1) {
+      cart1.cartItems.map(item => totalQuantity += item.quantity);
+    }
+    res.render('thankyou', { totalQuantity,user });
   } catch (error) {
     console.log(error);
   }
@@ -556,6 +600,7 @@ module.exports = {
   profilePWchange,
   //..................
   loadcheckout,
+  Applycoupen,
   orderplace,
   thankyouorderplaced,
   loadorderhistory,

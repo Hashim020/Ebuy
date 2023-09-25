@@ -1,5 +1,6 @@
 const Category = require('../Model/CatogoryModel');
 const Product = require('../Model/ProductModel');
+const Cart= require('../Model/CartModel')
 const path = require('path')
 
 
@@ -109,11 +110,20 @@ const Loadprodutaddform= async(req,res)=>{
 const listprocuts=async (req,res,id)=>{
     try {
         id=req.params.id
+        if(req.session){
+            var userId=req.session.user_id
+            var cart1=await Cart.findOne({user:userId});
+            var user=req.session.user_id;
+          }
+          let totalQuantity = 0;
+          if(cart1){
+            cart1.cartItems.map(item => totalQuantity += item.quantity);
+          }
         if(id){
         const categories=await Category.findOne({_id:id},{name:1});
         const products=await Product.find({category:id,is_Listed:true});
         const categories1=await Category.find();
-        res.render("Productlist",{categories,products,categories1})
+        res.render("Productlist",{categories,products,categories1,totalQuantity,user})
 
     }        
         
@@ -238,11 +248,20 @@ const Proceedtoeditprdct =async(req,res)=>{
 const viewproducts=async (req,res)=>{
     try {
         const id=req.params.id;
-
+       var user='';
+        if(req.session){
+            var userId=req.session.user_id
+            var user=req.session.user_id;
+            var cart1=await Cart.findOne({user:userId});
+          }
+          let totalQuantity = 0;
+          if(cart1){
+            cart1.cartItems.map(item => totalQuantity += item.quantity);
+          }
         const categories1=await Category.find()
         const viewproduct=await Product.findOne({_id:id})
         const categories=await Category.findOne({_id:viewproduct.category})
-        res.render("Viewproduct",{viewproduct,categories,categories1})
+        res.render("Viewproduct",{viewproduct,categories,categories1,totalQuantity,user})
     } catch (error) {
         console.log(error);
     }
@@ -268,7 +287,17 @@ const searchproducts = async (req, res) => {
         });
         const categories1= await Category.find()
         const categories=await Category.find()
-        res.render('Productlist', { products,categories1,categories }); // Adjust 'searchResults' to your template name
+        if(req.session){
+            var userId=req.session.user_id
+            var cart1=await Cart.findOne({user:userId});
+          }
+          let totalQuantity = 0;
+          if(cart1){
+            cart1.cartItems.map(item => totalQuantity += item.quantity);
+          };
+          let user=''
+           user=req.session.user_id
+        res.render('Productlist', { products,categories1,categories,totalQuantity,user }); // Adjust 'searchResults' to your template name
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error'); // Send an error response

@@ -30,6 +30,7 @@
     "razorpay": "^2.9.2",
     "session": "^0.1.0",
     "sweetalert": "^2.1.2",
-    "twilio": "^4.17.0"
+    "twilio": "^4.17.0",
+    "uuid": "^9.0.1"
   }
 }

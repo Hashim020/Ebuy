@@ -280,6 +280,24 @@
 								<div><strong class="order-total">₹ <%=cartTotal%></strong></div>
 							</div>
 						</div>
+						<div class="container">
+							<div class="row">
+								<div class="col-sm-6">
+									<h6> Have A Discount Code? / Select One</h6>
+									<select style="width: 50%;" id="discountSelect" class="form-control">
+										<option>--select One</option>
+										<% coupons.forEach(coupon=> { %>
+											<option value="<%= coupon.code %>">
+												<%= coupon.discount %>% -Code-<%= coupon.code %>
+											</option>
+											<% }); %>
+									</select>
+									<button type="button" class="btn btn-primary mt-2"
+										onclick="applyDiscount()">APPLY</button>
+								</div>
+							</div>
+						</div>
+
 						<div class="payment-method">
 							<div class="input-radio">
 								<input type="radio" name="payment" id="payment-1">
@@ -288,8 +306,10 @@
 									Online Payment
 								</label>
 								<div class="caption">
-									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-										incididunt ut labore et dolore magna aliqua.</p>
+									<p>"Razorpay: Trusted online payment gateway, facilitates seamless transactions for
+										businesses,
+										ensuring secure and hassle-free digital payments for customers."
+									</p>
 								</div>
 							</div>
 							<div class="input-radio">
@@ -299,8 +319,11 @@
 									Cash On Delivery
 								</label>
 								<div class="caption">
-									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-										incididunt ut labore et dolore magna aliqua.</p>
+									<p>
+										"COD: Popular payment method, pay when receiving goods, builds
+										trust, suitable for those wary of online transactions or lacking digital
+										payment."
+									</p>
 								</div>
 							</div>
 							<div class="input-radio">
@@ -310,17 +333,12 @@
 									Wallet
 								</label>
 								<div class="caption">
-									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-										incididunt ut labore et dolore magna aliqua.</p>
+									<p>"Wallet payment: Convenient digital mode, store funds securely,
+										swift transactions, popular for quick online purchases, reducing card details
+										entry."
+									</p>
 								</div>
 							</div>
-						</div>
-						<div class="input-checkbox">
-							<input type="checkbox" id="terms">
-							<label for="terms">
-								<span></span>
-								I've read and accept the <a href="#">terms & conditions</a>
-							</label>
 						</div>
 						<a href="#" id="placeOrderButton" class="primary-btn order-submit">Place order</a>
 					</div>
@@ -469,6 +487,32 @@
 		<!-- /FOOTER -->
 
 		<!-- jQuery Plugins -->
+		<script>
+			function applyDiscount() {
+  var selectedOption = document.getElementById("discountSelect").value;
+  if (selectedOption !== "--select One") {
+    fetch('/Applycoupen', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ discountCode: selectedOption }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      alert("Cart Total Updated: $" );
+      // Perform further actions based on the updated total
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  } else {
+    alert("Please select a discount code.");
+  }
+}
+
+
+		</script>
 
 		<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 		<script>
@@ -589,8 +633,8 @@
 					.then(response => {
 						if (response) {
 							window.location.href = 'http://localhost:3000/place-order-thankyou';
-						}else if(response.success===false){
-							alert='payment failed '
+						} else if (response.success === false) {
+							alert = 'payment failed '
 						}
 						return response.json();
 					})

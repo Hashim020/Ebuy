@@ -97,6 +97,10 @@
                                             <td>₹<%= order.total %></td>
                                           </tr>
                                           <tr>
+                                            <th>Payment Status</th>
+                                            <td><%= order.paymentStatus %></td>
+                                          </tr>
+                                          <tr>
                                             <th>Ship to</th>
                                             <td>
                                               <% if (order.address) { %>
@@ -110,7 +114,7 @@
                                           </tr>
                                           <tr>
                                             <th>Order #</th>
-                                            <td><%= order._id %></td>
+                                            <td><%= order.OrderId %></td>
                                           </tr>
                                           <tr>
                                             <th>Order Status</th>
@@ -129,10 +133,10 @@
                                           </li>
                                         <% }); %>
                                       </ul>
-                                      <form action="/cancel_order" method="post">
+                                      <form action="/cancel_order" method="post" class="d-inline" onsubmit="return confirmCancel()">
                                         <input type="hidden" name="order_id" value="<%= order._id %>">
-                                        <button type="submit" class="btn btn-danger">Cancel Order</button>
-                                      </form>
+                                        <button type="submit" class="btn btn-sm btn-danger">Cancel Order</button>
+                                    </form>
                                     </div>
                                   </div>
                                 </div>
@@ -148,7 +152,11 @@
             </div>
         </div>
     </section>
-
+    <script>
+      function confirmCancel() {
+          return confirm("Are you sure you want to cancel this order?");
+      }
+  </script>
     <!-- Include Bootstrap JS and Popper.js for Bootstrap functionality -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
