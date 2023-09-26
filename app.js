@@ -21,7 +21,7 @@ const adminRoute = require('./Routes/AdminRoute')
 app.use('/admin',adminRoute)
 
 app.use('*',(req,res)=>{
-    res.send('404 error')
+    res.render('404page')
 })
 
 app.listen(3000,()=>{

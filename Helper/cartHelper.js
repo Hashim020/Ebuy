@@ -12,7 +12,7 @@ const addCart = async (productId, userId) => {
       const productObj = {
           productId: productId,
           quantity: 1,
-          total: product.price,
+          total: product.offerprice,
           category: product.category
       };
 
@@ -26,10 +26,10 @@ const addCart = async (productId, userId) => {
                   {
                       $inc: {
                           "cartItems.$.quantity": 1,
-                          "cartItems.$.total": product.price
+                          "cartItems.$.total": product.offerprice
                       },
                       $set: {
-                          cartTotal: cart.cartTotal + product.price
+                          cartTotal: cart.cartTotal + product.offerprice
                       }
                   }
               );
@@ -38,7 +38,7 @@ const addCart = async (productId, userId) => {
                   { user: userId },
                   {
                       $push: { cartItems: productObj },
-                      $inc: { cartTotal: product.price }
+                      $inc: { cartTotal: product.offerprice }
                   }
               );
           }
@@ -46,7 +46,7 @@ const addCart = async (productId, userId) => {
           const newCart = new Cart({
               user: userId,
               cartItems: productObj,
-              cartTotal: product.price,
+              cartTotal: product.offerprice,
               category: product.category
           });
           await newCart.save();
@@ -187,7 +187,7 @@ const updateQuantity = async(data) => {
             { _id: cartId, "cartItems.productId": proId },
             {
               $pull: { cartItems: { productId: proId } },
-              $inc: {cartTotal:product.price * count } 
+              $inc: {cartTotal:product.offerprice * count } 
             },
             { new: true }
           )
@@ -206,8 +206,8 @@ const updateQuantity = async(data) => {
               { _id: cartId, "cartItems.productId": proId },
               {
                 $inc: { "cartItems.$.quantity": count ,
-                "cartItems.$.total":product.price*count,
-                cartTotal:product.price * count
+                "cartItems.$.total":product.offerprice*count,
+                cartTotal:product.offerprice * count
               },
               }
   
@@ -252,7 +252,7 @@ const updateQuantity = async(data) => {
         const quantityToRemove = cartItem.quantity;
         Cart.updateOne( 
           { _id: cartId ,"cartItems.productId":proId},
-          { $inc: {cartTotal: product.price* quantityToRemove * -1 },
+          { $inc: {cartTotal: product.offerprice* quantityToRemove * -1 },
           $pull: { cartItems: { productId: proId } },
            }
         ).then(() => {

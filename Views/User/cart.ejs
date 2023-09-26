@@ -92,7 +92,7 @@
                     <h2 class="product_name mb-5">The Total Amount Of</h2>
                     <div class="price_indiv d-flex justify-content-between">
                         <p>Product amount</p>
-                        <p id="total1">₹<span id="product_total_amt"><%=cartTotal%></span></p>
+                        <p id="total">₹<span id="product_total_amt"><%=cartTotal%></span></p>
                     </div>
                     <div class="price_indiv d-flex justify-content-between">
                         <p>Shipping Charge</p>
@@ -101,7 +101,7 @@
                     <hr />
                     <div class="total-amt d-flex justify-content-between font-weight-bold">
                         <p>The total amount of (including VAT)</p>
-                        <p id="total">₹<span id="total_cart_amt"><%=cartTotal%></span></p>
+                        <p id="total1">₹<span id="total_cart_amt"><%=cartTotal%></span></p>
                     </div>
                     <!-- Checkout button aligned to the right -->
                     <div class="text-right mt-3">
@@ -346,7 +346,8 @@
                     console.log("Subtotal;"+subTotalVal)
                     subTotalVal.innerHTML = response.newSubTotal;
                     document.getElementById('total').innerHTML = response.cartTotal;
-  
+                    document.getElementById('total1').innerHTML = response.cartTotal;
+                    
                   }
                   else if(response.status=='outOfStock'){
                     Swal.fire({
