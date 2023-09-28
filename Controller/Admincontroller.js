@@ -169,6 +169,10 @@ const GetCouponManagement = async (req,res)=>{
 const postCoupon = async (req, res) => {
     try {   
         const { code, discount, status, dateOfStart, expirationDate, minimumPurchase, maximumPurchase } = req.body;
+        const coupons= await Coupon.find({code:code});
+        if(coupons){
+            return res.json({duplicate:false})
+        }
         const newCoupon = new Coupon({
             code,
             discount,

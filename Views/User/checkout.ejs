@@ -275,22 +275,38 @@
 								<div>Shipping</div>
 								<div><strong>FREE</strong></div>
 							</div>
+							<% if(!cart1.discountCoupon){%>
 							<div class="order-col">
 								<div><strong>TOTAL</strong></div>
 								<div><strong class="order-total">₹ <%=cartTotal%></strong></div>
 							</div>
+							<%} %>
+							<% if(cart1.discountCoupon){%>
+								<div class="order-col">
+									<div><strong>SUB TOTAL</strong></div>
+									<div><strong class="order-subtotal">₹ <%=cartTotal+cart1.discountAmount%></strong></div>
+								</div>
+								<div class="order-col">
+									<div><strong>Discount</strong></div>
+									<div><strong  class="order-subtotal">- <%=cart1.discountAmount%></strong></div>
+								</div>
+								<div class="order-col">
+									<div><strong>TOTAL</strong></div>
+									<div><strong class="order-total">₹ <%=cartTotal%></strong></div>
+								</div>
+							<%} %>
 						</div>
 						<div class="container">
 							<div class="row">
-							  <div class="col-sm-6">
-								<h6>Have A Discount Code? / Enter One</h6>
-								<input style="width: 50%;" id="couponCode" class="form-control" type="text"
-									   name="coupon" placeholder="Coupon Code">
-								<button type="button" class="btn btn-primary mt-2"
+								<div class="col-sm-6">
+									<h6>Have A Discount Code? / Enter One</h6>
+									<input style="width: 50%;" id="couponCode" class="form-control" type="text"
+										name="coupon" placeholder="Coupon Code">
+									<button type="button" class="btn btn-primary mt-2"
 										onclick="applyDiscount()">APPLY</button>
-							  </div>
+								</div>
 							</div>
-						  </div>						  
+						</div>
 						<div class="payment-method">
 							<div class="input-radio">
 								<input type="radio" name="payment" id="payment-1">
@@ -482,30 +498,73 @@
 		<!-- jQuery Plugins -->
 		<script>
 			function applyDiscount() {
-				var selectedOption = document.getElementById("discountSelect").value;
-				if (selectedOption !== "--select One") {
+				var couponCode = document.getElementById("couponCode").value;
+				if (couponCode) {
 					fetch('/Applycoupen', {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',
 						},
-						body: JSON.stringify({ discountCode: selectedOption }),
+						body: JSON.stringify({ couponCode: couponCode }),
 					})
-					.then(response => response.json())
-					.then(data => {
-						alert("Cart Total Updated: $" + data.updatedTotal);
-						// Perform further actions based on the updated total
-					})
-					.catch(error => {
-						console.error('Error:', error);
-					});
+						.then(response => response.json())
+						.then(data => {
+							if (data.success===true) {
+								Swal.fire({
+									icon: 'success',
+									title: 'Coupon Applied!',
+									text: 'Updated Total: $' + data.discountValue,
+									timer: 1000,
+								}).then(() => {
+									window.location.reload();
+
+								});
+							} else if (data.success === false) {
+								Swal.fire({
+									icon: 'error',
+									title: 'Invalid Coupon Code',
+									text: 'Please enter a valid coupon code.',
+								});
+							} else if (data.validity === false) {
+								Swal.fire({
+									icon: 'error',
+									title: 'Coupon Expired',
+									text: 'Please enter a valid coupon code.',
+								});
+							} else if (data.minimumPrice === false) {
+								Swal.fire({
+									icon: 'error',
+									title: 'Purchase Amount is less than coupon minimum purchase amount',
+									text: 'Please enter a valid coupon code.',
+								});
+							} else if (data.maximumPrice === false) {
+								Swal.fire({
+									icon: 'error',
+									title: 'Purchase Amount is Greater than coupon upper purchase amount',
+									text: 'Please enter a valid coupon code.',
+								});
+							} else if (data.usedfororder === false) {
+								Swal.fire({
+									icon: 'error',
+									title: 'one coupon is allready used',
+									text: 'Please enter a valid coupon code.',
+								});
+							}
+						})
+						.catch(error => {
+							console.error('Error:', error);
+						});
 				} else {
-					alert("Please select a discount code.");
+					Swal.fire({
+						icon: 'error',
+						title: 'Missing Coupon Code',
+						text: 'Please enter a coupon code.',
+					});
 				}
 			}
 		</script>
-		
-		
+
+
 
 		<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 		<script>
@@ -550,6 +609,8 @@
 										window.location.href = 'http://localhost:3000/place-order-thankyou';
 									} else if (jsonResponse.onlinepayment) {
 										Razorpaypayment(jsonResponse);
+									}else if(jsonResponse.response.WalletPayment){
+										window.location.href = 'http://localhost:3000/place-order-thankyou';
 									}
 								} else {
 									// Handle non-OK response (e.g., server error)
@@ -658,7 +719,7 @@
 				}
 			});
 		</script>
-
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

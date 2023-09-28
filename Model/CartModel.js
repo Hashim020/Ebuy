@@ -4,6 +4,14 @@ const cartSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    discountAmount:{
+      type:Number,
+      required:false
+    },
+    discountCoupon:{
+      type: String,
+      required:false
+    },
     cartItems: [
       {
         productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },

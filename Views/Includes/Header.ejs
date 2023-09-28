@@ -18,13 +18,16 @@
 					</button>
 					<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 						<% if (user) { %>
+							<li><a class="dropdown-item" style="color: black;" href="/MyAccount">My Account</a></li>
+							<li><a class="dropdown-item" style="color: black;" href="/logout">LogOut</a></li>
 							<% } else { %>
 								<li><a class="dropdown-item" style="color: black;" href="/register">Register</a>
 								<li> <a class="dropdown-item" style="color: black;" href="/login">Login</a></li>
 								<% } %>
-									</li>
-									<li><a class="dropdown-item" style="color: black;" href="/MyAccount">My Account</a>
-									</li>
+									
+									
+										
+
 
 									<!-- <a class="dropdown-item" href="#">Another action</a>
 							  <a class="dropdown-item" href="#">Something else here</a> -->

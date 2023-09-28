@@ -97,6 +97,14 @@
                                             <td>₹<%= order.total %></td>
                                           </tr>
                                           <tr>
+                                            <th>you Saved</th>
+                                            <td>₹<%= order.discountAmount %></td>
+                                          </tr>
+                                          <tr>
+                                            <th>Applied Coupon</th>
+                                            <td><%= order.discountCoupon %></td>
+                                          </tr>
+                                          <tr>
                                             <th>Payment Status</th>
                                             <td><%= order.paymentStatus %></td>
                                           </tr>

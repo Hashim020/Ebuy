@@ -166,24 +166,42 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% coupons.forEach(coupon => { %>
+                            <% coupons.forEach(coupon=> { %>
                                 <tr>
-                                    <td><button class="btn btn-primary btn-sm edit-btn">Edit</button><span class="coupon-id"><%= coupon._id %></span></td>
-                                    <td><%= coupon.code %></td>
-                                    <td><%= coupon.discount %></td>
-                                    <td><%= coupon.status %></td>
-                                    <td><%= coupon.dateOfStart.toLocaleDateString() %></td>
-                                    <td><%= coupon.expirationDate.toLocaleDateString() %></td>
-                                    <td><%= coupon.minimumPurchase.toLocaleString() %></td>
-                                    <td><%= coupon.maximumPurchase === null ? 'None' : coupon.maximumPurchase.toLocaleString() %></td>
+                                    <td>
+                                        <%= coupon._id %>
+                                    </td>
+                                    <td>
+                                        <%= coupon.code %>
+                                    </td>
+                                    <td>
+                                        <%= coupon.discount %>
+                                    </td>
+                                    <td>
+                                        <%= coupon.status %>
+                                    </td>
+                                    <td>
+                                        <%= coupon.dateOfStart.toLocaleDateString() %>
+                                    </td>
+                                    <td>
+                                        <%= coupon.expirationDate.toLocaleDateString() %>
+                                    </td>
+                                    <td>
+                                        <%= coupon.minimumPurchase.toLocaleString() %>
+                                    </td>
+                                    <td>
+                                        <%= coupon.maximumPurchase===null ? 'None' :
+                                            coupon.maximumPurchase.toLocaleString() %>
+                                    </td>
                                 </tr>
-                            <% }); %>
+                                <% }); %>
                         </tbody>
                     </table>
                 </div>
             </div>
             <!-- ============================Edit modal======================================================= -->
-            <div class="modal fade" id="editCouponModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="editCouponModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -208,7 +226,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- ======================modal================================-->
 
             <!-- Modal -->
@@ -269,9 +287,9 @@
 
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.edit-btn').forEach(function(button) {
-                button.addEventListener('click', function() {
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.edit-btn').forEach(function (button) {
+                button.addEventListener('click', function () {
                     var id = this.parentElement.querySelector('.coupon-id').textContent;
                     var code = this.parentElement.parentElement.querySelector('.coupon-code').textContent;
                     var discount = this.parentElement.parentElement.querySelector('.coupon-discount').textContent;
@@ -280,7 +298,7 @@
                     var expirationDate = this.parentElement.parentElement.querySelector('.coupon-expirationDate').textContent;
                     var minimumPurchase = this.parentElement.parentElement.querySelector('.coupon-minimumPurchase').textContent;
                     var maximumPurchase = this.parentElement.parentElement.querySelector('.coupon-maximumPurchase').textContent;
-        
+
                     document.querySelector('#modalCouponId').textContent = id;
                     document.querySelector('#modalCouponCode').textContent = code;
                     document.querySelector('#modalCouponDiscount').textContent = discount;
@@ -289,16 +307,16 @@
                     document.querySelector('#modalCouponExpirationDate').textContent = expirationDate;
                     document.querySelector('#modalCouponMinimumPurchase').textContent = minimumPurchase;
                     document.querySelector('#modalCouponMaximumPurchase').textContent = maximumPurchase;
-        
+
                     var editCouponModal = new bootstrap.Modal(document.getElementById('editCouponModal'));
                     editCouponModal.show();
                 });
             });
         });
-        </script>
-        
+    </script>
+
     <script>
-       async function saveCoupon() {
+        async function saveCoupon() {
             // You can use JavaScript to retrieve the values from the form and save them to your database.
             // For example:
             const code = document.getElementById('code').value;
@@ -327,7 +345,7 @@
                             }),
                         })
                             .then(response => response.json())
-                            .then (data => {
+                            .then(data => {
                                 // Handle the response from your server
                                 if (data.success === true) {
                                     Swal.fire({
@@ -335,9 +353,17 @@
                                         title: 'Data Saved',
                                         text: 'Coupon Created Successfully',
                                         confirmButtonText: 'OK',
-                                        Timeout:1000,
+                                        Timeout: 1000,
                                     });
-                                    window.location.href='http://localhost:3000/admin/Coupon-Management'
+                                    window.location.href = 'http://localhost:3000/admin/Coupon-Management'
+                                } if (data.duplicate === false) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error!',
+                                        text: 'Coupon Allready Exist',
+                                        confirmButtonText: 'OK'
+                                    });
+
                                 }
 
                             })
