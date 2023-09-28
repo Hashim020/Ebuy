@@ -306,7 +306,7 @@ const loadcheckout = async (req, res) => {
     const user = req.session.user_id
     const categories = await Category.find()
     const address = await Address.find({ userId: id });
-    const coupons= await Coupon.find();
+  
     let cartTotal = 0;
 
     const total = await Cart.findOne({ user: user });
@@ -353,7 +353,10 @@ const loadcheckout = async (req, res) => {
     if (cart1) {
       cart1.cartItems.map(item => totalQuantity += item.quantity);
     }
-    
+    const coupons= await  Coupon.find({
+      minimumPurchase: { $lte:cart1.cartTotal }, // Find coupons where minimumPurchase is greater than or equal to cartTotal
+      status: 'Active', // Optionally, include a condition for active coupons
+    })
     res.render('checkout', { categories, address, cart, cartTotal, totalQuantity,user,coupons,cart1 })
   } catch (error) {
 
@@ -535,6 +538,7 @@ const orderplace = async (req, res) => {
       const orderId = newOrder._id;
       const UserId=req.session.user_id;
       const response= await Walletpayment(orderId,UserId);
+      console.log(response);
       return res.json({response});
     }
   } catch (error) {
@@ -581,9 +585,10 @@ async function Walletpayment(orderId, userId) {
         $inc: { balance: -order.total }, // Decrease the balance
         $push: {
           transactions: {
+            orderId:orderId,
             Amount: order.total,
             transactionstype: 'Debit',
-            transactionsDate: new Date()
+            transactionsDate: new Date(),
           }
         }
       },
@@ -771,14 +776,38 @@ const cancelOrder = async (req, res) => {
 
     // Retrieve Order Details
     const order = await Order.findById(orderId);
-    const items = order.items;
 
+    const items = order.items;
     // Increase Product Stock
     items.forEach(async (item) => {
       const product = await Product.findById(item.productId);
       product.stock += item.quantity; // Assuming there's a 'stock' property in the Product schema
       await product.save();
-    });
+    });  // Check if payment status is 'Paid'
+    if (order.paymentStatus === 'Paid') {
+      // Find associated wallet for the user
+      const wallet = await Wallet.findOne({ user: order.user });
+
+      if (wallet) {
+        // Increase the balance of the wallet by the total amount of the canceled order
+        wallet.balance += order.total;
+
+        // Add a transaction to the wallet
+        const transaction = {
+          orderId: orderId,
+          Amount: order.total,
+          transactionstype: 'Credit',
+          transactionsDate: new Date()
+        };
+
+        wallet.transactions.push(transaction);
+
+        await wallet.save();
+      }
+    }
+
+    // Update Order Status
+    await Order.findByIdAndUpdate(orderId, { status: 'Return Accepted' });
 
     res.redirect('http://localhost:3000/Order-histoty'); // Redirect to order history page after cancelling
   } catch (error) {
@@ -818,6 +847,27 @@ const OrderMoreDetails = async (req, res) => {
 };
 
 
+const getMywallet= async (req,res)=>{
+  try {
+    const userId = req.session.user_id; // Assuming you have user sessions set up
+    const wallet = await Wallet.findOne({ user: userId }).populate({
+      path: 'transactions',
+      populate: {
+        path: 'orderId',
+        model: 'Order'
+      }
+    });
+    console.log(wallet.transactions);
+
+    res.render('My-Wallet', { wallet });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Internal Server Error');
+  }
+
+}
+
+
 
 
 
@@ -847,4 +897,5 @@ module.exports = {
   loadorderhistory,
   cancelOrder,
   OrderMoreDetails,
+  getMywallet,
 }

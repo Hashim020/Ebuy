@@ -4,8 +4,15 @@ const bodyParser = require('body-parser');
 admin_route.use(bodyParser.json())
 admin_route.use(bodyParser.urlencoded({extended:true}))
 
+const session = require('express-session')
+admin_route.use(session({
+    secret:'adminsession123',
+    saveUninitialized:true,
+    resave:false
 
+}))
 const auth = require('../Middleware/Adminauth')
+
 
 const adminControl = require('../Controller/Admincontroller') // importing admin controller to rute
 const CategoryControl = require('../Controller/CatogoryController') // importing category controller to rute
@@ -21,7 +28,7 @@ admin_route.post('/',adminControl.verifyLogin)// admin credential verify
 admin_route.get("/adminlogout",adminControl.adminlogout)
 
 
-admin_route.get('/home',auth.isLogin,adminControl.loadDashboard)
+admin_route.get('/home',auth.is_admin,auth.isLogin,adminControl.loadDashboard)
 admin_route.get('/Catogory',auth.isLogin,CategoryControl.Loadcatogory)// for loading category page
 admin_route.post('/addcatogory',auth.isLogin,CategoryControl.addcatogory); // for addeing new category
 admin_route.get('/Editcatgory/:id',auth.isLogin,CategoryControl.Editcatgory); // for editting

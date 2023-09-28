@@ -11,6 +11,12 @@ const walletSchema = new mongoose.Schema({
     },
     transactions: [
         {
+
+            orderId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Order', // Reference to the Order model
+                required: false
+            },
             Amount: {
                 type: Number,
                 required: false,
@@ -18,7 +24,7 @@ const walletSchema = new mongoose.Schema({
             transactionstype: {
                 type: String,
                 enum: ['Debit', 'Credit'],
-                required:false,
+                required: false,
             },
             transactionsDate: {
                 type: Date,

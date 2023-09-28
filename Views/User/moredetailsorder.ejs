@@ -141,10 +141,12 @@
                                           </li>
                                         <% }); %>
                                       </ul>
+                                      <% if(order.status=='Pending'){ %>
                                       <form action="/cancel_order" method="post" class="d-inline" onsubmit="return confirmCancel()">
                                         <input type="hidden" name="order_id" value="<%= order._id %>">
                                         <button type="submit" class="btn btn-sm btn-danger">Cancel Order</button>
                                     </form>
+                                    <% }%>  
                                     </div>
                                   </div>
                                 </div>

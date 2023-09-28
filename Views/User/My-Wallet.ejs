@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wallets</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="text-center">My Wallets</h1>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Wallet</div>
+                    <div class="card-body">
+                        <% if(wallet){ %>
+                            <p>Current Balance: ₹<%= wallet.balance %>
+                            </p>
+                            <% }%>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ... Your existing code ... -->
+
+        <h2 class="text-center">Recent Transactions</h2>
+
+        <table class="table table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Transaction Type</th>
+                    <th>Amount</th>
+                    <th>Order ID</th>
+                    <th>Order Product Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if(wallet){ %>
+                    <% for (const transaction of wallet.transactions) { %>
+                        <tr class="<%= transaction.transactionstype === 'Debit' ? 'text-danger' : 'text-success' %>">
+                            <td>
+                                <%= transaction.transactionsDate.toISOString().split('T')[0] %>
+                            </td>
+                            <td>
+                                <%= transaction.transactionstype %>
+                            </td>
+                            <td>₹<%= transaction.Amount %>
+                            </td>
+                            <td>
+                                <%= transaction.orderId ? transaction.orderId.OrderId : 'N/A' %>
+                            </td>
+                            <td>
+                                <% if (transaction.orderId) { %>
+                                    <% transaction.orderId.items.forEach(item=> { %>
+                                        Product: <%= item.productId.productName %><br>
+                                            Quantity: <%= item.quantity %><br>
+                                                Total: ₹<%= item.total %><br><br>
+                                                    <% }); %>
+                                                        <% } else { %>
+                                                            N/A
+                                                            <% } %>
+                            </td>
+                        </tr>
+                        <% } %>
+                            <% }%>
+            </tbody>
+        </table>
+
+        <% if(!wallet){ %>
+            <h1>No Transactions Yet</h1>
+            <% } %>
+
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

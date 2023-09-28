@@ -27,9 +27,25 @@ const isLogout= async(req,res,next)=>{
         console.log(error.message);
     }
 }
+const is_admin= async(req,res,next)=>{
+    try {
+        if(req.session.user_id){
+            res.redirect('/')
+        }else{
+            next();
+        }
+        
+        
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
 
 
 module.exports={
     isLogin,
-    isLogout
+    isLogout,
+    is_admin
 }

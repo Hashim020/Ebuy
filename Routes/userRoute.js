@@ -26,7 +26,7 @@ user_route.get('/',userController.loadHome)
 user_route.get('/login',userController.loadlogin)
 user_route.get('/logout',userController.userLogout)
 user_route.post('/verifylogin',userController.verifyLogin)
-user_route.get('/MyAccount',userController.ProfileLoad)
+user_route.get('/MyAccount',auth.requireSignIn,userController.ProfileLoad)
 user_route.get('/MyAccount-address',auth.requireSignIn,addresscontroller.Loadaddressmngmnt);
 user_route.post('/save-address',auth.requireSignIn,addresscontroller.saveaddress)
 user_route.post('/save-address-checkout',auth.requireSignIn,addresscontroller.saveaddresscheckout);
@@ -34,6 +34,8 @@ user_route.get('/Order-histoty',auth.requireSignIn,userController.loadorderhisto
 user_route.get('/view-more/:id',auth.requireSignIn,userController.OrderMoreDetails);
 user_route.post('/update-profile',auth.requireSignIn,userController.profileEdit);
 user_route.patch('/update-password',auth.requireSignIn,userController.profilePWchange);
+user_route.get('/My-Wallet',auth.requireSignIn,userController.getMywallet);
+
 
 
 
@@ -56,17 +58,17 @@ user_route.post("/search-items",ProductControl.searchproducts);
 
 user_route.get("/view-cart",cartcontroller.loadcart);
 user_route.post("/add-to-cart/:id",auth.isLogin,cartcontroller.addToCart)
-user_route.put('/editQuantity',cartcontroller.editQuantity);
-user_route.delete('/deleteProduct',cartcontroller.deleteProduct);
+user_route.put('/editQuantity',auth.requireSignIn,cartcontroller.editQuantity);
+user_route.delete('/deleteProduct',auth.requireSignIn,cartcontroller.deleteProduct);
 
 
 
 
-user_route.get('/Checkout',userController.loadcheckout);
-user_route.post('/Applycoupen',userController.Applycoupen);
+user_route.get('/Checkout',auth.requireSignIn,userController.loadcheckout);
+user_route.post('/Applycoupen',auth.requireSignIn,userController.Applycoupen);
 user_route.get('/place-order-thankyou',userController.thankyouorderplaced)
-user_route.post('/place-order',userController.orderplace);
-user_route.post('/cancel_order',userController.cancelOrder);
+user_route.post('/place-order',auth.requireSignIn,userController.orderplace);
+user_route.post('/cancel_order',auth.requireSignIn,userController.cancelOrder);
 user_route.post('/verify-payment', (req, res) => {
     userHelper.Paymentverify(req)
         .then((message) => {

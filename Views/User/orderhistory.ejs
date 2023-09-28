@@ -110,10 +110,13 @@
                                               <td><%= order.OrderId %></td>
                                               <td><%= order.status %></td>
                                               <td>
+                                                <% if(order.status=='Pending'){ %>
                                                   <form action="/cancel_order" method="post" class="d-inline" onsubmit="return confirmCancel()">
                                                       <input type="hidden" name="order_id" value="<%= order._id %>">
                                                       <button type="submit" class="btn btn-sm btn-danger">Cancel Order</button>
                                                   </form>
+                                                  <% }%>  
+
                                                   <a href="/view-more/<%= order._id %>">
                                                       <button class="btn btn-sm btn-primary">View More</button>
                                                   </a>

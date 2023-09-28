@@ -184,7 +184,9 @@
             <td class="text-start">
               <a href="Editcatgory/<%= category?._id %>">
                 <button type="button" class="btn btn-primary btn-sm edit-button">Edit</button>
+                
               </a>
+              <button class="btn btn-danger btn-sm" onclick="deletecategory(category._id)"  type="button">delete</button>
             </td>
           </tr>
           <% }); %>
@@ -193,6 +195,29 @@
     </div>
   </div>
 </div>
+
+<script>
+  function deleteCategory(categoryId) {
+  fetch(`/deleteCategory`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json(); // You may not need this if you don't expect a JSON response.
+  })
+  .then(data => {
+    console.log('Category deleted:', data);
+    // You can perform any additional actions here after successful deletion.
+  })
+  .catch(error => console.error('Error:', error));
+}
+
+</script>
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {

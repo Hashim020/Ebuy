@@ -276,25 +276,27 @@
 								<div><strong>FREE</strong></div>
 							</div>
 							<% if(!cart1.discountCoupon){%>
-							<div class="order-col">
-								<div><strong>TOTAL</strong></div>
-								<div><strong class="order-total">₹ <%=cartTotal%></strong></div>
-							</div>
-							<%} %>
-							<% if(cart1.discountCoupon){%>
-								<div class="order-col">
-									<div><strong>SUB TOTAL</strong></div>
-									<div><strong class="order-subtotal">₹ <%=cartTotal+cart1.discountAmount%></strong></div>
-								</div>
-								<div class="order-col">
-									<div><strong>Discount</strong></div>
-									<div><strong  class="order-subtotal">- <%=cart1.discountAmount%></strong></div>
-								</div>
 								<div class="order-col">
 									<div><strong>TOTAL</strong></div>
 									<div><strong class="order-total">₹ <%=cartTotal%></strong></div>
 								</div>
-							<%} %>
+								<%} %>
+									<% if(cart1.discountCoupon){%>
+										<div class="order-col">
+											<div><strong>SUB TOTAL</strong></div>
+											<div><strong class="order-subtotal">₹ <%=cartTotal+cart1.discountAmount%>
+												</strong></div>
+										</div>
+										<div class="order-col">
+											<div><strong>Discount</strong></div>
+											<div><strong class="order-subtotal">- <%=cart1.discountAmount%></strong>
+											</div>
+										</div>
+										<div class="order-col">
+											<div><strong>TOTAL</strong></div>
+											<div><strong class="order-total">₹ <%=cartTotal%></strong></div>
+										</div>
+										<%} %>
 						</div>
 						<div class="container">
 							<div class="row">
@@ -304,9 +306,43 @@
 										name="coupon" placeholder="Coupon Code">
 									<button type="button" class="btn btn-primary mt-2"
 										onclick="applyDiscount()">APPLY</button>
+									<a  onclick="showCouponsModal()">View Coupons</a>
 								</div>
 							</div>
 						</div>
+						<!-- ================= coupon modal================================== -->
+						<!-- Hidden Modal -->
+						<div id="couponsModal" style="display: none;">
+							<!-- Modal Content -->
+							<div>
+								<h2>Coupons</h2>
+								<% coupons.forEach(coupon=> { %>
+									<div>
+										<span>
+											<%= coupon.code %>
+										</span>
+										<span>
+											<%= coupon.discount %>% Discount
+										</span>
+									</div>
+									<% }); %>
+							</div>
+							<!-- Close Button -->
+							<button onclick="hideCouponsModal()">Close</button>
+						</div>
+						<script>
+							// Function to show the modal
+							function showCouponsModal() {
+								document.getElementById('couponsModal').style.display = 'block';
+							}
+
+							// Function to hide the modal
+							function hideCouponsModal() {
+								document.getElementById('couponsModal').style.display = 'none';
+							}
+						</script>
+
+						<!-- ======================================================== -->
 						<div class="payment-method">
 							<div class="input-radio">
 								<input type="radio" name="payment" id="payment-1">
@@ -509,7 +545,7 @@
 					})
 						.then(response => response.json())
 						.then(data => {
-							if (data.success===true) {
+							if (data.success === true) {
 								Swal.fire({
 									icon: 'success',
 									title: 'Coupon Applied!',
@@ -609,7 +645,7 @@
 										window.location.href = 'http://localhost:3000/place-order-thankyou';
 									} else if (jsonResponse.onlinepayment) {
 										Razorpaypayment(jsonResponse);
-									}else if(jsonResponse.response.WalletPayment){
+									} else if (jsonResponse.response.WalletPayment) {
 										window.location.href = 'http://localhost:3000/place-order-thankyou';
 									}
 								} else {
