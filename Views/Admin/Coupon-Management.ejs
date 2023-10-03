@@ -353,9 +353,12 @@
                                         title: 'Data Saved',
                                         text: 'Coupon Created Successfully',
                                         confirmButtonText: 'OK',
-                                        Timeout: 1000,
+                                        timer: 1000, // Corrected property name
+                                    }).then((result) => {
+                                        window.location.href = '/admin/Coupon-Management';
+
                                     });
-                                    window.location.href = 'http://localhost:3000/admin/Coupon-Management'
+
                                 } if (data.duplicate === false) {
                                     Swal.fire({
                                         icon: 'error',

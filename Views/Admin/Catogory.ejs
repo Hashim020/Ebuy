@@ -7,6 +7,7 @@
   <title>Category Management</title>
   <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
   <link rel="stylesheet" href="../assets/css/styles.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 
 <body>
@@ -140,101 +141,136 @@
         </nav>
       </header>
       <!--  Header End -->
-<!-- ===========Start of Catogory card=================================================================================================================== -->
-<div class="container-fluid">
-  <div class="card">
-    <div class="card-body">
-      <h2 class="d-inline-block">Category Management</h2>
-      <% if(typeof message !== 'undefined') { %>
-      <h6 style="color:#04c414;"> <%= message %></h6>
-      <% } %>
-      <button id="addButton" class="btn btn-success float-end">Add New</button>
-      <div id="addForm" class="d-none mt-4">
-        <h4>Add New Category</h4>
-        <form action="addcatogory" method="post">
-          <div class="mb-3">
-            <label for="categoryName" class="form-label">Category Name</label>
-            <input name="Categoryname" type="text" class="form-control" id="categoryName" required>
+      <!-- ===========Start of Catogory card=================================================================================================================== -->
+      <div class="container-fluid">
+        <div class="card">
+          <div class="card-body">
+            <h2 class="d-inline-block">Category Management</h2>
+            <% if(typeof message !=='undefined' ) { %>
+              <h6 style="color:#04c414;">
+                <%= message %>
+              </h6>
+              <% } %>
+                <button id="addButton" class="btn btn-success float-end">Add New</button>
+                <div id="addForm" class="d-none mt-4">
+                  <h4>Add New Category</h4>
+                  <form action="addcatogory" method="post">
+                    <div class="mb-3">
+                      <label for="categoryName" class="form-label">Category Name</label>
+                      <input name="Categoryname" type="text" class="form-control" id="categoryName" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="categoryDescription" class="form-label">Category Description</label>
+                      <textarea type="text" name="Categorydescription" class="form-control" id="categoryDescription"
+                        rows="4" required></textarea>
+                    </div>
+                    <button type="submit" id="saveButton" class="btn btn-primary">Save</button>
+                  </form>
+                </div>
+                <table class="table table-bordered  ">
+                  <thead>
+                    <tr>
+                      <th class="text-start">Category Name</th>
+                      <th class="text-start">Description</th>
+                      <th class="text-start">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% categories.forEach(category=> { %>
+                      <tr>
+                        <td class="text-start">
+                          <span class="editable-field">
+                            <%= category.name %>
+                          </span>
+                        </td>
+                        <td class="text-start">
+                          <span class="editable-field">
+                            <%= category.description %>
+                          </span>
+                        </td>
+                        <td class="text-start">
+                          <a href="Editcatgory/<%= category?._id %>">
+                            <button type="button" class="btn btn-primary btn-sm edit-button">Edit</button>
+
+                          </a>
+                          <button data-categoryid="<%=category._id %>" id="deleteButton" class="btn btn-danger btn-sm"
+                            type="button">delete</button>
+                        </td>
+                      </tr>
+                      <% }); %>
+                  </tbody>
+                </table>
           </div>
-          <div class="mb-3">
-            <label for="categoryDescription" class="form-label">Category Description</label>
-            <textarea type="text" name="Categorydescription" class="form-control" id="categoryDescription"
-              rows="4" required></textarea>
-          </div>
-          <button type="submit" id="saveButton" class="btn btn-primary">Save</button>
-        </form>
+        </div>
       </div>
-      <table class="table table-bordered  ">
-        <thead>
-          <tr>
-            <th class="text-start">Category Name</th>
-            <th class="text-start">Description</th>
-            <th class="text-start">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% categories.forEach(category => { %>
-          <tr>
-            <td class="text-start">
-              <span class="editable-field"><%= category.name %></span>
-            </td>
-            <td class="text-start">
-              <span class="editable-field"><%= category.description %></span>
-            </td>
-            <td class="text-start">
-              <a href="Editcatgory/<%= category?._id %>">
-                <button type="button" class="btn btn-primary btn-sm edit-button">Edit</button>
-                
-              </a>
-              <button class="btn btn-danger btn-sm" onclick="deletecategory(category._id)"  type="button">delete</button>
-            </td>
-          </tr>
-          <% }); %>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
 
-<script>
-  function deleteCategory(categoryId) {
-  fetch(`/deleteCategory`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.json(); // You may not need this if you don't expect a JSON response.
-  })
-  .then(data => {
-    console.log('Category deleted:', data);
-    // You can perform any additional actions here after successful deletion.
-  })
-  .catch(error => console.error('Error:', error));
-}
+      <script>
+        // Assuming you have a delete button with id "deleteButton" and a categoryId associated with it
+        const deleteButton = document.getElementById('deleteButton');
 
-</script>
+        deleteButton.addEventListener('click', () => {
+          const categoryId = deleteButton.dataset.categoryid;
+          deleteCategory(categoryId);
+        });
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const addButton = document.getElementById("addButton");
-    const addForm = document.getElementById("addForm");
 
-    addButton.addEventListener("click", () => {
-      addForm.classList.toggle("d-none");
-    });
-  });
-</script>
-<!-- ===================================================================================================================================== -->
-  <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
-  <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../assets/js/sidebarmenu.js"></script>
-  <script src="../assets/js/app.min.js"></script>
-  <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+        async function deleteCategory(categoryId) {
+          try {
+            const response = await fetch(`Delete-Category/${categoryId}`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer YOUR_AUTH_TOKEN' // If you require authentication
+              }
+            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log(data);
+
+            if (data.product === true) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Category Could Not Delete',
+                text: data.message,
+              });
+            }else if(data.product===false){
+              
+            }
+          } catch (error) {
+            console.error('Error:', error);
+
+            // Display error message using sweetalert2
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'An error occurred while deleting the category.',
+            });
+          }
+        }
+      </script>
+
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const addButton = document.getElementById("addButton");
+          const addForm = document.getElementById("addForm");
+
+          addButton.addEventListener("click", () => {
+            addForm.classList.toggle("d-none");
+          });
+        });
+      </script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+      <!-- ===================================================================================================================================== -->
+      <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+      <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+      <script src="../assets/js/sidebarmenu.js"></script>
+      <script src="../assets/js/app.min.js"></script>
+      <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
 </body>
 
 </html>

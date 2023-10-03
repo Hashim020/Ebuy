@@ -38,14 +38,14 @@ const loadHome = async (req, res) => {
     if (req.session) {
       var userId = req.session.user_id
       var cart = await Cart.findOne({ user: userId });
-      var user = await User.findById(userId);
+      var user1 = await User.findById(userId);
     }
     const categories = await Category.find().sort({ name: 1 });
     let totalQuantity = 0;
     if (cart) {
       cart.cartItems.map(item => totalQuantity += item.quantity);
     }
-    res.render("main", { categories, user, totalQuantity })
+    res.render("main", { categories, user1, totalQuantity })
   } catch (error) {
     console.log(error.message);
   }
@@ -306,7 +306,7 @@ const loadcheckout = async (req, res) => {
     const user = req.session.user_id
     const categories = await Category.find()
     const address = await Address.find({ userId: id });
-  
+    var user1 = await User.findById(user);
     let cartTotal = 0;
 
     const total = await Cart.findOne({ user: user });
@@ -357,7 +357,7 @@ const loadcheckout = async (req, res) => {
       minimumPurchase: { $lte:cart1.cartTotal }, // Find coupons where minimumPurchase is greater than or equal to cartTotal
       status: 'Active', // Optionally, include a condition for active coupons
     })
-    res.render('checkout', { categories, address, cart, cartTotal, totalQuantity,user,coupons,cart1 })
+    res.render('checkout', { categories, address, cart, cartTotal, totalQuantity,user,coupons,cart1,user1 })
   } catch (error) {
 
     console.log(error);
@@ -723,7 +723,8 @@ async function Walletpayment(orderId, userId) {
 const thankyouorderplaced = async (req, res) => {
   try {
     if (req.session) {
-      var userId = req.session.user_id
+      var userId = req.session.user_id;
+      var user1 = await User.findById(userId);
       var cart1 = await Cart.findOne({ user: userId });
       var user=req.session.user_id
     }
@@ -731,7 +732,7 @@ const thankyouorderplaced = async (req, res) => {
     if (cart1) {
       cart1.cartItems.map(item => totalQuantity += item.quantity);
     }
-    res.render('thankyou', { totalQuantity,user });
+    res.render('thankyou', { totalQuantity,user,user1 });
   } catch (error) {
     console.log(error);
   }

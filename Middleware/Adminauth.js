@@ -19,7 +19,7 @@ const isLogout= async(req,res,next)=>{
         if(req.session.admin_id){
             res.redirect('/admin/home')
         }else{
-            next();
+            next()
         }
         
         
@@ -42,10 +42,23 @@ const is_admin= async(req,res,next)=>{
 }
 
 
-
+const isLogin1 = async (req, res, next) => {
+    try {
+      if (req.session.admin_id) {
+        // If admin is logged in, redirect to a different page
+        return res.redirect('/admin/home')// Change '/dashboard' to your desired destination
+      } else {
+        // If not logged in, continue with the normal flow
+        return next();
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
 
 module.exports={
     isLogin,
     isLogout,
-    is_admin
+    is_admin,
+    isLogin1
 }

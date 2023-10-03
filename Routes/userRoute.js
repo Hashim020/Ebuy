@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express')
 const user_route = express();
 
@@ -13,7 +14,7 @@ const addresscontroller=require('../Controller/Addresscontroller')
 const auth = require('../Middleware/auth');
 const userHelper=require('../Helper/userHelper');
 user_route.use(session({
-    secret: 'your-secret-key',
+    secret: process.env.UserSessionSecret,
     resave: false,
     saveUninitialized: false
 }));

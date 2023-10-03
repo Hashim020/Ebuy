@@ -1,4 +1,5 @@
 const Category = require('../Model/CatogoryModel');
+const Product= require('../Model/ProductModel')
 
 
 const Loadcatogory= async(req,res)=>{
@@ -70,13 +71,29 @@ const submiteditcatgory= async(req,res)=>{
     }
 }
 
-const deleteCategory=async (req,res)=>{
+const deleteCategory = async (req, res) => {
     try {
-        
+        const CategoryId = req.params.id;
+        const product = await Product.find({ category: CategoryId });
+        if (product.length > 0) {
+            res.json({ product: true, message: 'Before Deleting this category unlist all product related this category' });
+            return; // Important: Add return statement to exit the function
+        }
+        else if(product===null) {
+            await Category.findByIdAndDelete(CategoryId)
+            res.json({ product: false, message: 'Before Deleting this category unlist all product related this category' });
+            return; // Important: Add return statement to exit the function
+        }
+        // If no products are found, proceed with category deletion
+        // ...
     } catch (error) {
-        
+        console.log(error);
     }
 }
+
+
+
+
 
 
 module.exports = {
@@ -84,4 +101,5 @@ module.exports = {
     Loadcatogory,
     Editcatgory,
     submiteditcatgory,
+    deleteCategory
 };

@@ -9,24 +9,24 @@
 				<li><a href="#"><i class="fa fa-map-marker"></i> 1734 Stonecoal Road</a></li>
 			</ul>
 			<ul class="header-links pull-right">
-				<!-- <li><a href="#"><i class="fa fa-rupee"></i> INR</a></li> -->
-				<!-- <li><a href="/myaccount"><i class="fa fa-user-o"></i> My Account</a></li> -->
 				<div class="dropdown">
-					<button class="  primary-btn cta-btn btn-sm" style="font-size: 10px;" type="button"
-						id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						Login
-					</button>
+					<% if(user1){%>
+						<i style="font-size: 15px;" class="fa fa-user fa-2x dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <%=user1.name%></i>
+					<%} else{%>
+						<i style="font-size: 17px;" class="fa fa-user fa-2x dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Sign in</i>
+					<%}%>
+
 					<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-						<% if (user) { %>
+						<% if (user1) { %>
 							<li><a class="dropdown-item" style="color: black;" href="/MyAccount">My Account</a></li>
 							<li><a class="dropdown-item" style="color: black;" href="/logout">LogOut</a></li>
 							<% } else { %>
 								<li><a class="dropdown-item" style="color: black;" href="/register">Register</a>
 								<li> <a class="dropdown-item" style="color: black;" href="/login">Login</a></li>
 								<% } %>
-									
-									
-										
+
+
+
 
 
 									<!-- <a class="dropdown-item" href="#">Another action</a>

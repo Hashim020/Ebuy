@@ -2208,3 +2208,30 @@ textarea.input {
   pointer-events: auto;
 }
 
+/* =============================================== */
+#top-header .fa-user {
+  color: aliceblue;
+  line-height: 10%;
+}
+
+#top-header .dropdown-toggle::after {
+  content: none; /* Remove the default caret icon */
+}
+
+#top-header .dropdown-menu {
+  background-color: #fff; /* Set background color of the dropdown menu */
+  border: none; /* Remove border */
+  box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Add a subtle shadow */
+}
+
+#top-header .dropdown-menu a {
+  color: black; /* Set text color */
+  font-size: 14px; /* Set font size */
+}
+
+#top-header .dropdown-menu a:hover {
+  background-color: #f0f0f0; /* Change background color on hover */
+}
+
+
+
