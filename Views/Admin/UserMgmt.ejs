@@ -166,8 +166,11 @@
                     <td><%=User.name%></td>
                     <td><%=User.email%></td>
                     <td>
+                      <% if(User.status===true){ %>
                       <a href="unblockuser/<%=User?._id%>"><button type="button"  class="btn btn-success btn-sm" onclick="unblockUser('user123')" >UNBLOCK</button></a>
+                      <%}else{ %>
                       <a href="blockuser/<%=User?._id%>"><button type="button"  class="btn btn-danger btn-sm" onclick="blockUser('user123')">BLOCK</button></a>
+                      <%} %>
                     </td>
                   </tr>
 

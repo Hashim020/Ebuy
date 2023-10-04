@@ -8,9 +8,50 @@
 	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
 	<title>EBuy - Checkout</title>
+	<style>
+		.coupons-container {
+			text-align: center;
+		}
 
+		.coupon {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			border: 1px solid #ccc;
+			padding: 10px;
+			margin: 10px 0;
+		}
 
+		.coupon-details {
+			flex: 1;
+		}
 
+		.coupon-code {
+			font-size: 18px;
+			font-weight: bold;
+		}
+
+		.discount {
+			font-size: 14px;
+			color: #555;
+		}
+
+		.copy-icon {
+			cursor: pointer;
+			font-size: 20px;
+			color: #007bff;
+		}
+
+		.copied-icon {
+			display: none;
+		}
+
+		.copied-text {
+			color: green;
+		}
+	</style>
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 	<!-- Google font -->
 	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
 
@@ -306,7 +347,7 @@
 										name="coupon" placeholder="Coupon Code">
 									<button type="button" class="btn btn-primary mt-2"
 										onclick="applyDiscount()">APPLY</button>
-									<a  onclick="showCouponsModal()">View Coupons</a>
+									<a style="cursor: pointer;" onclick="showCouponsModal()">View Coupons</a>
 								</div>
 							</div>
 						</div>
@@ -314,16 +355,23 @@
 						<!-- Hidden Modal -->
 						<div id="couponsModal" style="display: none;">
 							<!-- Modal Content -->
-							<div>
+							<div class="coupons-container">
 								<h2>Coupons</h2>
 								<% coupons.forEach(coupon=> { %>
-									<div>
-										<span>
-											<%= coupon.code %>
-										</span>
-										<span>
-											<%= coupon.discount %>% Discount
-										</span>
+									<div class="coupon">
+										<div class="coupon-details">
+											<span class="coupon-code">
+												<%= coupon.code %>
+											</span>
+											<span class="discount">
+												<%= coupon.discount %>% Discount
+											</span>
+										</div>
+										<div class="copy-icon" onclick="copyCouponCode(this)">
+											<i class="fa fa-copy"></i>
+											<span style="font-size: 12px;" class="copy-text">Copy</span>
+											<i class="fa fa-check copied-icon" style="display: none;"></i>
+										</div>
 									</div>
 									<% }); %>
 							</div>
@@ -339,6 +387,29 @@
 							// Function to hide the modal
 							function hideCouponsModal() {
 								document.getElementById('couponsModal').style.display = 'none';
+							}
+
+						</script>
+
+						<script>
+							function copyCouponCode(element) {
+								var couponCode = element.parentElement.querySelector('.coupon-code').innerText.trim(); // Added trim() to remove extra spaces
+								var copyIcon = element.querySelector('.fa-copy');
+								var copyText = element.querySelector('.copy-text');
+								var copiedIcon = element.querySelector('.copied-icon');
+
+								if (!copyText.classList.contains('copied-text')) {
+									navigator.clipboard.writeText(couponCode)
+										.then(function () {
+											copyIcon.style.display = 'none';
+											copyText.innerText = 'Copied';
+											copyText.classList.add('copied-text');
+											copiedIcon.style.display = 'inline';
+										})
+										.catch(function () {
+											alert('Could not copy coupon code');
+										});
+								}
 							}
 						</script>
 
@@ -378,6 +449,7 @@
 									Wallet
 								</label>
 								<div class="caption">
+									<p>Your Current Wallet Balance: <strong style="color: #18f818; font-size: 24px;">₹<%= wallet.balance %></strong></p>
 									<p>"Wallet payment: Convenient digital mode, store funds securely,
 										swift transactions, popular for quick online purchases, reducing card details
 										entry."
@@ -532,7 +604,49 @@
 		<!-- /FOOTER -->
 
 		<!-- jQuery Plugins -->
+
+
 		<script>
+			function applyDiscount() {
+				var couponCode = document.getElementById("couponCode").value;
+				if (couponCode) {
+					fetch('/Applycoupen', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({ couponCode: couponCode }),
+					})
+						.then(response => response.json())
+						.then(data => {
+							if (data.success === true) {
+								toastr.success('Coupon Applied!', 'Updated Total: $' + data.discountValue, { timeOut: 2000, progressBar: true });
+								setTimeout(() => {
+									window.location.reload();
+								}, 1000);
+							} else if (data.success === false) {
+								toastr.error('Invalid Coupon Code', 'Please enter a valid coupon code.');
+							} else if (data.validity === false) {
+								toastr.error('Coupon Expired', 'Please enter a valid coupon code.');
+							} else if (data.minimumPrice === false) {
+								toastr.error('Purchase Amount is less than coupon minimum purchase amount', 'Please enter a valid coupon code.');
+							} else if (data.maximumPrice === false) {
+								toastr.error('Purchase Amount is Greater than coupon upper purchase amount', 'Please enter a valid coupon code.');
+							} else if (data.used === false) {
+								toastr.error('coupon is already used', 'Please enter a another coupon code.');
+							}
+						})
+						.catch(error => {
+							console.error('Error:', error);
+						});
+				} else {
+					toastr.error('Missing Coupon Code', 'Please enter a coupon code.');
+				}
+			}
+		</script>
+
+
+		<!-- <script>
 			function applyDiscount() {
 				var couponCode = document.getElementById("couponCode").value;
 				if (couponCode) {
@@ -579,7 +693,7 @@
 									title: 'Purchase Amount is Greater than coupon upper purchase amount',
 									text: 'Please enter a valid coupon code.',
 								});
-							} else if (data.usedfororder === false) {
+							} else if (data.used === false) {
 								Swal.fire({
 									icon: 'error',
 									title: 'one coupon is allready used',
@@ -598,11 +712,11 @@
 					});
 				}
 			}
-		</script>
+		</script> -->
 
 
 
-		<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 		<script>
 			document.addEventListener("DOMContentLoaded", function () {
 				const placeOrderButton = document.getElementById("placeOrderButton");
@@ -759,7 +873,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
 </body>
 

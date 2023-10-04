@@ -12,7 +12,6 @@ const mongoose = require('mongoose');
 const Razorpay = require('razorpay');
 const userHelper = require('../Helper/userHelper');
 const { v4: uuidv4 } = require('uuid');
-// const { response } = require('../Routes/userRoute');
 
 
 
@@ -357,7 +356,9 @@ const loadcheckout = async (req, res) => {
       minimumPurchase: { $lte:cart1.cartTotal }, // Find coupons where minimumPurchase is greater than or equal to cartTotal
       status: 'Active', // Optionally, include a condition for active coupons
     })
-    res.render('checkout', { categories, address, cart, cartTotal, totalQuantity,user,coupons,cart1,user1 })
+    coupons.sort((a, b) => new Date(b.expirationDate) - new Date(a.expirationDate));
+    const wallet= await Wallet.findOne({user:id});
+    res.render('checkout', { wallet,categories, address, cart, cartTotal, totalQuantity,user,coupons,cart1,user1 })
   } catch (error) {
 
     console.log(error);
@@ -381,7 +382,7 @@ const Applycoupen = async (req, res) => {
           const usedCoupons = user.usedCoupons.map(coupon => coupon.code);
 
           if (usedCoupons.includes(couponCode)) {
-            return res.json({ success: false, message: 'Coupon already used' });
+            return res.json({ used: false, message: 'Coupon already used' });
           }
 
           // Check if cart total meets minimum purchase requirement
@@ -847,7 +848,6 @@ const OrderMoreDetails = async (req, res) => {
   }
 };
 
-
 const getMywallet= async (req,res)=>{
   try {
     const userId = req.session.user_id; // Assuming you have user sessions set up
@@ -858,14 +858,43 @@ const getMywallet= async (req,res)=>{
         model: 'Order'
       }
     });
-    console.log(wallet.transactions);
+
+    // Sorting transactions based on transactionDate in ascending order
+    wallet.transactions.sort((a, b) => new Date(b.transactionsDate) - new Date(a.transactionsDate));
 
     res.render('My-Wallet', { wallet });
   } catch (error) {
     console.log(error);
     res.status(500).send('Internal Server Error');
   }
+}
 
+
+
+
+const  updateCouponStatus= async()=> {
+  try {
+      const currentDate = new Date();
+      
+      // Find all active coupons that have expired
+      const expiredCoupons = await Coupon.find({
+          status: 'Active',
+          expirationDate: { $lt: currentDate }
+      });
+
+      // Update the status of expired coupons to 'Inactive'
+      const updatePromises = expiredCoupons.map(coupon => {
+          coupon.status = 'Inactive';
+          return coupon.save();
+      });
+
+      // Execute all update operations
+      await Promise.all(updatePromises);
+
+      console.log(`${expiredCoupons.length} coupons have been updated.`);
+  } catch (error) {
+      console.error('Error updating coupons:', error);
+  }
 }
 
 
@@ -899,4 +928,5 @@ module.exports = {
   cancelOrder,
   OrderMoreDetails,
   getMywallet,
+  updateCouponStatus,
 }

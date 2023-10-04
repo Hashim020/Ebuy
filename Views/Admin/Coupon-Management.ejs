@@ -230,8 +230,7 @@
             <!-- ======================modal================================-->
 
             <!-- Modal -->
-            <div class="modal fade" id="couponModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                aria-hidden="true">
+            <div class="modal fade" id="couponModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -245,10 +244,12 @@
                                 <div class="form-group">
                                     <label for="code">Code</label>
                                     <input type="text" class="form-control" id="code" required>
+                                    <small id="codeError" class="text-danger"></small> <!-- Placeholder for error message -->
                                 </div>
                                 <div class="form-group">
                                     <label for="discount">Discount (%)</label>
                                     <input type="number" class="form-control" id="discount" required>
+                                    <small id="discountError" class="text-danger"></small> <!-- Placeholder for error message -->
                                 </div>
                                 <div class="form-group">
                                     <label for="status">Status</label>
@@ -259,19 +260,23 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="dateOfStart">Date of Start</label>
-                                    <input type="date" class="form-control" id="dateOfStart" required>
+                                    <input min=<%= new Date().toISOString().split('T')[0] %> type="date" class="form-control" id="dateOfStart" required>
+                                    <small id="dateOfStartError" class="text-danger"></small> <!-- Placeholder for error message -->
                                 </div>
                                 <div class="form-group">
                                     <label for="expirationDate">Expiration Date</label>
                                     <input type="date" class="form-control" id="expirationDate" required>
+                                    <small id="expirationDateError" class="text-danger"></small> <!-- Placeholder for error message -->
                                 </div>
                                 <div class="form-group">
                                     <label for="minimumPurchase">Minimum Purchase</label>
                                     <input type="number" class="form-control" id="minimumPurchase" value="2000">
+                                    <small id="minimumPurchaseError" class="text-danger"></small> <!-- Placeholder for error message -->
                                 </div>
                                 <div class="form-group">
                                     <label for="maximumPurchase">Maximum Purchase</label>
                                     <input type="number" class="form-control" id="maximumPurchase" value="50000">
+                                    <small id="maximumPurchaseError" class="text-danger"></small> <!-- Placeholder for error message -->
                                 </div>
                             </form>
                         </div>
@@ -281,125 +286,93 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
+            </div><script>
+    document.getElementById('dateOfStart').addEventListener('change', function() {
+    var selectedDate = this.value; // Get the selected date of start
 
+    // Set the minimum value of expirationDate to the selected date of start
+    document.getElementById('expirationDate').min = selectedDate;
+});
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.edit-btn').forEach(function (button) {
-                button.addEventListener('click', function () {
-                    var id = this.parentElement.querySelector('.coupon-id').textContent;
-                    var code = this.parentElement.parentElement.querySelector('.coupon-code').textContent;
-                    var discount = this.parentElement.parentElement.querySelector('.coupon-discount').textContent;
-                    var status = this.parentElement.parentElement.querySelector('.coupon-status').textContent;
-                    var dateOfStart = this.parentElement.parentElement.querySelector('.coupon-dateOfStart').textContent;
-                    var expirationDate = this.parentElement.parentElement.querySelector('.coupon-expirationDate').textContent;
-                    var minimumPurchase = this.parentElement.parentElement.querySelector('.coupon-minimumPurchase').textContent;
-                    var maximumPurchase = this.parentElement.parentElement.querySelector('.coupon-maximumPurchase').textContent;
+</script>
+    
 
-                    document.querySelector('#modalCouponId').textContent = id;
-                    document.querySelector('#modalCouponCode').textContent = code;
-                    document.querySelector('#modalCouponDiscount').textContent = discount;
-                    document.querySelector('#modalCouponStatus').textContent = status;
-                    document.querySelector('#modalCouponDateOfStart').textContent = dateOfStart;
-                    document.querySelector('#modalCouponExpirationDate').textContent = expirationDate;
-                    document.querySelector('#modalCouponMinimumPurchase').textContent = minimumPurchase;
-                    document.querySelector('#modalCouponMaximumPurchase').textContent = maximumPurchase;
+<script>
+    async function saveCoupon() {
+    const code = document.getElementById('code').value.trim();
+    const discount = parseFloat(document.getElementById('discount').value);
+    const status = document.getElementById('status').value;
+    const dateOfStart = document.getElementById('dateOfStart').value;
+    const expirationDate = document.getElementById('expirationDate').value;
+    const minimumPurchase = parseFloat(document.getElementById('minimumPurchase').value);
+    const maximumPurchase = parseFloat(document.getElementById('maximumPurchase').value);
 
-                    var editCouponModal = new bootstrap.Modal(document.getElementById('editCouponModal'));
-                    editCouponModal.show();
-                });
-            });
-        });
-    </script>
+    // Clear previous error messages
+    document.getElementById('codeError').textContent = '';
+    document.getElementById('discountError').textContent = '';
+    document.getElementById('dateOfStartError').textContent = '';
+    document.getElementById('expirationDateError').textContent = '';
+    document.getElementById('minimumPurchaseError').textContent = '';
+    document.getElementById('maximumPurchaseError').textContent = '';
 
-    <script>
-        async function saveCoupon() {
-            // You can use JavaScript to retrieve the values from the form and save them to your database.
-            // For example:
-            const code = document.getElementById('code').value;
-            const discount = parseFloat(document.getElementById('discount').value);
-            const status = document.getElementById('status').value;
-            const dateOfStart = document.getElementById('dateOfStart').value;
-            const expirationDate = document.getElementById('expirationDate').value;
-            const minimumPurchase = parseFloat(document.getElementById('minimumPurchase').value);
-            const maximumPurchase = parseFloat(document.getElementById('maximumPurchase').value);
-            if (code.length > 6) {
-                if (discount > 0) {
-                    if (dateOfStart) {
-                        fetch('save_coupon', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                code,
-                                discount,
-                                status,
-                                dateOfStart,
-                                expirationDate,
-                                minimumPurchase,
-                                maximumPurchase,
-                            }),
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                // Handle the response from your server
-                                if (data.success === true) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Data Saved',
-                                        text: 'Coupon Created Successfully',
-                                        confirmButtonText: 'OK',
-                                        timer: 1000, // Corrected property name
-                                    }).then((result) => {
-                                        window.location.href = '/admin/Coupon-Management';
-
-                                    });
-
-                                } if (data.duplicate === false) {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error!',
-                                        text: 'Coupon Allready Exist',
-                                        confirmButtonText: 'OK'
-                                    });
-
-                                }
-
-                            })
-                            .catch((error) => {
-                                console.error('Error:', error);
+    if (code.length > 6) {
+        if (discount > 0) {
+            if (dateOfStart) {
+                if (!/\s/.test(code)) { // Check for spaces in code
+                    fetch('save_coupon', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            code,
+                            discount,
+                            status,
+                            dateOfStart,
+                            expirationDate,
+                            minimumPurchase,
+                            maximumPurchase,
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success === true) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Data Saved',
+                                text: 'Coupon Created Successfully',
+                                confirmButtonText: 'OK',
+                                timer: 1000,
+                            }).then((result) => {
+                                window.location.href = '/admin/Coupon-Management';
                             });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: 'Enter Start Date',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: 'Enter Discount',
-                        confirmButtonText: 'OK'
+                        } else if (data.duplicate === false) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: 'Coupon Already Exists',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
                     });
-
+                } else {
+                    document.getElementById('codeError').textContent = 'Spaces are not allowed in code';
                 }
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: 'Code should be 6 character',
-                    confirmButtonText: 'OK'
-                });
+                document.getElementById('dateOfStartError').textContent = 'Enter Start Date';
             }
+        } else {
+            document.getElementById('discountError').textContent = 'Enter Discount';
         }
-    </script>
+    } else {
+        document.getElementById('codeError').textContent = 'Code should be 6 characters';
+    }
+}
+
+</script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 
     <!-- Bootstrap JS (including Popper.js) -->

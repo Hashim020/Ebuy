@@ -88,7 +88,7 @@ user_route.post('/verify-payment', (req, res) => {
 });
 
 
-
+userController.updateCouponStatus();
 
 
 module.exports = user_route;
