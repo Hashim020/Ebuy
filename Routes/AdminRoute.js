@@ -9,7 +9,10 @@ const session = require('express-session')
 admin_route.use(session({
     secret: process.env.AdminSessionSecret,
     saveUninitialized: true,
-    resave: false
+    resave: false,
+    cookie:{
+        maxAge:24*60*60*1000 
+    }
 }))
 const auth = require('../Middleware/Adminauth')
 
@@ -76,5 +79,6 @@ admin_route.post('/order-updatebyadmin', auth.isLogin, adminControl.updateOrderS
 admin_route.get('/Coupon-Management', auth.isLogin, adminControl.GetCouponManagement);
 admin_route.post('/save_coupon', auth.isLogin, adminControl.postCoupon);
 
+admin_route.get('/Sales-Report', auth.isLogin, adminControl.getSalesreport);
 
 module.exports = admin_route;

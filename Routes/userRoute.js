@@ -16,7 +16,10 @@ const userHelper=require('../Helper/userHelper');
 user_route.use(session({
     secret: process.env.UserSessionSecret,
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    cookie:{
+        maxAge:24*60*60*1000 
+    }
 }));
 
 

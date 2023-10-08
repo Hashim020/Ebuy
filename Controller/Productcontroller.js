@@ -128,7 +128,7 @@ const listprocuts=async (req,res,id)=>{
 
     }        
         
-    } catch (error) {
+    } catch (error) {  
         
     }
 }

@@ -15,262 +15,155 @@
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
     data-sidebar-position="fixed" data-header-position="fixed">
     <!-- Sidebar Start -->
-    <aside class="left-sidebar">
-      <!-- Sidebar scroll-->
-      <div>
-        <div class="brand-logo d-flex align-items-center justify-content-between">
-          <a href="/admin" class="text-nowrap logo-img">
-            <img src="../assets/images/logos/dark-logo.svg" width="180" alt="" />
-          </a>
-          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
-            <i class="ti ti-x fs-8"></i>
-          </div>
-        </div>
-        <!-- Sidebar navigation-->
-        <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
-          <ul id="sidebarnav">
-            <li class="nav-small-cap">
-              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">Home</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="home" aria-expanded="false">
-                <span>
-                  <i class="ti ti-layout-dashboard"></i>
-                </span>
-                <span class="hide-menu">Dashboard</span>
-              </a>
-            </li>
-            <li class="nav-small-cap">
-              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">Product Management</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="Catogory" aria-expanded="false">
-                <span>
-                  <i class="ti ti-article"></i>
-                </span>
-                <span class="hide-menu">Product Category</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="Productmmgmt" aria-expanded="false">
-                <span>
-                  <i class="ti ti-briefcase"></i>
-                </span>
-                <span class="hide-menu">Product Management</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="Usermanagement" aria-expanded="false">
-                <span>
-                  <i class="ti ti-user"></i>
-                </span>
-                <span class="hide-menu">User Management</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="Order-management" aria-expanded="false">
-                <span>
-                  <i class="ti ti-file-description"></i>
-                </span>
-                <span class="hide-menu">Order Management</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-typography.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-typography"></i>
-                </span>
-                <span class="hide-menu">Typography</span>
-              </a>
-            </li>
+    <%- include('./Includes/sideMenu.ejs')%>
+      <!--  Sidebar End -->
+      <!--  Main wrapper -->
+      <div class="body-wrapper">
+        <!--  Header Start -->
+        <%- include('./Includes/Header.ejs')%>
 
-          </ul>
-        </nav>
-        <!-- End Sidebar navigation -->
-      </div>
-      <!-- End Sidebar scroll-->
-    </aside>
-    <!--  Sidebar End -->
-    <!--  Main wrapper -->
-    <div class="body-wrapper">
-      <!--  Header Start -->
-      <header class="app-header">
-        <nav class="navbar navbar-expand-lg navbar-light">
-          <ul class="navbar-nav">
-            <li class="nav-item d-block d-xl-none">
-              <a class="nav-link sidebartoggler nav-icon-hover" id="headerCollapse" href="javascript:void(0)">
-                <i class="ti ti-menu-2"></i>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link nav-icon-hover" href="javascript:void(0)">
-                <i class="ti ti-bell-ringing"></i>
-                <div class="notification bg-primary rounded-circle"></div>
-              </a>
-            </li>
-          </ul>
-          <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
-            <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
-              <li class="nav-item dropdown">
-                <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
-                  aria-expanded="false">
-                  <img src="../assets/images/profile/user-1.jpg" alt="" width="35" height="35" class="rounded-circle">
-                </a>
-                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
-                  <div class="message-body">
-                    <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                      <i class="ti ti-user fs-6"></i>
-                      <p class="mb-0 fs-3">My Profile</p>
-                    </a>
-                    <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                      <i class="ti ti-mail fs-6"></i>
-                      <p class="mb-0 fs-3">My Account</p>
-                    </a>
-                    <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                      <i class="ti ti-list-check fs-6"></i>
-                      <p class="mb-0 fs-3">My Task</p>
-                    </a>
-                    <a href="./authentication-login.html" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </nav>
-      </header>
-      <!--  Header End -->
-      <!-- ===========Start of Catogory card=================================================================================================================== -->
-      <div class="container-fluid">
-        <div class="card">
-          <div class="card-body">
-            <h2 class="d-inline-block">Category Management</h2>
-            <% if(typeof message !=='undefined' ) { %>
-              <h6 style="color:#04c414;">
-                <%= message %>
-              </h6>
-              <% } %>
-                <button id="addButton" class="btn btn-success float-end">Add New</button>
-                <div id="addForm" class="d-none mt-4">
-                  <h4>Add New Category</h4>
-                  <form action="addcatogory" method="post">
-                    <div class="mb-3">
-                      <label for="categoryName" class="form-label">Category Name</label>
-                      <input name="Categoryname" type="text" class="form-control" id="categoryName" required>
+          <!--  Header End -->
+          <!-- ===========Start of Catogory card=================================================================================================================== -->
+          <div class="container-fluid">
+            <div class="card">
+              <div class="card-body">
+                <h2 class="d-inline-block">Category Management</h2>
+                <% if(typeof message !=='undefined' ) { %>
+                  <h6 style="color:#04c414;">
+                    <%= message %>
+                  </h6>
+                  <% } %>
+                    <button id="addButton" class="btn btn-success float-end">Add New</button>
+                    <div id="addForm" class="d-none mt-4">
+                      <h4>Add New Category</h4>
+                      <form action="addcatogory" method="post">
+                        <div class="mb-3">
+                          <label for="categoryName" class="form-label">Category Name</label>
+                          <input name="Categoryname" type="text" class="form-control" id="categoryName" required>
+                        </div>
+                        <div class="mb-3">
+                          <label for="categoryDescription" class="form-label">Category Description</label>
+                          <textarea type="text" name="Categorydescription" class="form-control" id="categoryDescription"
+                            rows="4" required></textarea>
+                        </div>
+                        <button type="submit" id="saveButton" class="btn btn-primary">Save</button>
+                      </form>
                     </div>
-                    <div class="mb-3">
-                      <label for="categoryDescription" class="form-label">Category Description</label>
-                      <textarea type="text" name="Categorydescription" class="form-control" id="categoryDescription"
-                        rows="4" required></textarea>
-                    </div>
-                    <button type="submit" id="saveButton" class="btn btn-primary">Save</button>
-                  </form>
-                </div>
-                <table class="table table-bordered  ">
-                  <thead>
-                    <tr>
-                      <th class="text-start">Category Name</th>
-                      <th class="text-start">Description</th>
-                      <th class="text-start">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% categories.forEach(category=> { %>
-                      <tr>
-                        <td class="text-start">
-                          <span class="editable-field">
-                            <%= category.name %>
-                          </span>
-                        </td>
-                        <td class="text-start">
-                          <span class="editable-field">
-                            <%= category.description %>
-                          </span>
-                        </td>
-                        <td class="text-start">
-                          <a href="Editcatgory/<%= category?._id %>">
-                            <button type="button" class="btn btn-primary btn-sm edit-button">Edit</button>
+                    <table class="table table-bordered  ">
+                      <thead>
+                        <tr>
+                          <th class="text-start">Category Name</th>
+                          <th class="text-start">Description</th>
+                          <th class="text-start">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% categories.forEach(category=> { %>
+                          <tr>
+                            <td class="text-start">
+                              <span class="editable-field">
+                                <%= category.name %>
+                              </span>
+                            </td>
+                            <td class="text-start">
+                              <span class="editable-field">
+                                <%= category.description %>
+                              </span>
+                            </td>
+                            <td class="text-start">
+                              <a href="Editcatgory/<%= category?._id %>">
+                                <button type="button" class="btn btn-primary btn-sm edit-button">Edit</button>
 
-                          </a>
-                          <button data-categoryid="<%=category._id %>" id="deleteButton" class="btn btn-danger btn-sm"
-                            type="button">delete</button>
-                        </td>
-                      </tr>
-                      <% }); %>
-                  </tbody>
-                </table>
+                              </a>
+                              <button data-categoryid="<%= category._id %>" class="btn btn-danger btn-sm deleteButton"
+                                type="button">Delete</button>
+                            </td>
+                          </tr>
+                          <% }); %>
+                      </tbody>
+                    </table>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <script>
-        // Assuming you have a delete button with id "deleteButton" and a categoryId associated with it
-        const deleteButton = document.getElementById('deleteButton');
+          <script>
+            // Assuming you have a delete button with id "deleteButton" and a categoryId associated with it
+            document.addEventListener('DOMContentLoaded', function () {
+              const deleteButtons = document.querySelectorAll('.deleteButton');
 
-        deleteButton.addEventListener('click', () => {
-          const categoryId = deleteButton.dataset.categoryid;
-          deleteCategory(categoryId);
-        });
-
-
-        async function deleteCategory(categoryId) {
-          try {
-            const response = await fetch(`Delete-Category/${categoryId}`, {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer YOUR_AUTH_TOKEN' // If you require authentication
-              }
-            });
-
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log(data);
-
-            if (data.product === true) {
-              Swal.fire({
-                icon: 'error',
-                title: 'Category Could Not Delete',
-                text: data.message,
+              deleteButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                  const categoryId = this.getAttribute('data-categoryid');
+                  deleteCategory(categoryId);
+                });
               });
-            }else if(data.product===false){
-              
-            }
-          } catch (error) {
-            console.error('Error:', error);
-
-            // Display error message using sweetalert2
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: 'An error occurred while deleting the category.',
             });
-          }
-        }
-      </script>
 
 
-      <script>
-        document.addEventListener("DOMContentLoaded", function () {
-          const addButton = document.getElementById("addButton");
-          const addForm = document.getElementById("addForm");
+            async function deleteCategory(categoryId) {
+              try {
+                const response = await fetch(`Delete-Category/${categoryId}`, {
+                  method: 'GET',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer YOUR_AUTH_TOKEN' // If you require authentication
+                  }
+                });
 
-          addButton.addEventListener("click", () => {
-            addForm.classList.toggle("d-none");
-          });
-        });
-      </script>
-      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-      <!-- ===================================================================================================================================== -->
-      <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
-      <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-      <script src="../assets/js/sidebarmenu.js"></script>
-      <script src="../assets/js/app.min.js"></script>
-      <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+                if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log(data);
+
+                if (data.product === true) {
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Category Could Not Delete',
+                    text: data.message,
+                  });
+                } else if (data.product === false) {
+                  Swal.fire({
+                    icon: 'success',
+                    title: 'Deleted Successfully',
+                    text: data.message,
+                    timer: 1600
+                  }).then(() => {
+                    window.location.reload();
+                  });
+                }
+              } catch (error) {
+                console.error('Error:', error);
+
+                // Display error message using sweetalert2
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'An error occurred while deleting the category.',
+                });
+              }
+            }
+          </script>
+
+
+          <script>
+            document.addEventListener("DOMContentLoaded", function () {
+              const addButton = document.getElementById("addButton");
+              const addForm = document.getElementById("addForm");
+
+              addButton.addEventListener("click", () => {
+                addForm.classList.toggle("d-none");
+              });
+            });
+          </script>
+          <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+          <!-- ===================================================================================================================================== -->
+          <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+          <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+          <script src="../assets/js/sidebarmenu.js"></script>
+          <script src="../assets/js/app.min.js"></script>
+          <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
 </body>
 
 </html>

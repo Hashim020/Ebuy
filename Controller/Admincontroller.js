@@ -170,8 +170,8 @@ const postCoupon = async (req, res) => {
     try {
         const { code, discount, status, dateOfStart, expirationDate, minimumPurchase, maximumPurchase } = req.body;
         const coupons = await Coupon.find({ code: code });
-        
-        if (coupons.length>0) {
+
+        if (coupons.length > 0) {
             return res.json({ duplicate: false })
         }
         const newCoupon = new Coupon({
@@ -192,6 +192,41 @@ const postCoupon = async (req, res) => {
         res.status(500).json({ success: false, message: 'An error occurred while saving the coupon.' });
     }
 };
+
+const getSalesreport = async (req, res) => {
+    try {
+        const monthlySales = await Order.aggregate([
+            {
+                $match: {
+                    status: 'Shipped'
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        $dateToString: {
+                            format: "%Y-%m",
+                            date: "$createdAt"
+                        }
+                    },
+                    totalSales: { $sum: "$total" }
+                }
+            },
+            {
+                $sort: {
+                    _id: 1
+                }
+            }
+        ]);
+
+        const month = monthlySales.map(monthlySale => monthlySale._id.substring(5, 7));
+        const totalSales = monthlySales.map(monthlySale => monthlySale.totalSales);
+        const orders = await Order.find({status:'Shipped'}); // Wait for the query to complete
+        res.render('Sales-Report', { orders,month,totalSales, });
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 
 
@@ -216,5 +251,6 @@ module.exports = {
     moredetailedorder,
     updateOrderStatusByAdmin,
     GetCouponManagement,
-    postCoupon
+    postCoupon,
+    getSalesreport
 }
