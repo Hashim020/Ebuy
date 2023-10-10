@@ -1,85 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-<title>Sign Up Page</title>
-<style>
-  body {
-    font-family: 'Montserrat', sans-serif;
-    background-color: #eee;
-    font-size: 16px;
-  }
-  .card {
-    border-radius: 25px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-top: 30px;
-  }
-  .form-label {
-    font-size: 14px;
-    color: red;
-  }
-  .form-control {
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    padding: 10px;
-  }
-  .btn-primary {
-    background-color: red;
-    border: none;
-    padding: 10px 20px;
-  }
-  .btn-primary:hover {
-    background-color: #b30000;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <title>Sign Up Page</title>
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #eee;
+      font-size: 16px;
+    }
+
+    .card {
+      border-radius: 25px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-top: 30px;
+    }
+
+    .form-label {
+      font-size: 14px;
+      color: red;
+    }
+
+    .form-control {
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .btn-primary {
+      background-color: red;
+      border: none;
+      padding: 10px 20px;
+    }
+
+    .btn-primary:hover {
+      background-color: #b30000;
+    }
+  </style>
 </head>
+
 <body>
-<section class="vh-100 d-flex align-items-center justify-content-center">
-  <div class="col-lg-5">
-    <div class="card text-black">
-      <div class="card-body p-md-4">
-        <h1 class="text-center fw-bold mb-4" style="font-size: 24px;">Sign up</h1>
-        <form action="/verify" method="post">
-          <div class="mb-3">
-            <label class="form-label" for="form3Example1c">Your Name</label>
-            <input type="text" id="form3Example1c" name="name" class="form-control" placeholder="Your Name" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label" for="form3Example3c">Your Email</label>
-            <input type="email" id="form3Example3c" name="email" class="form-control" placeholder="Your Email" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label" for="form3Example3c">Enter Your Number</label>
-            <input type="number" id="form3Example3c" class="form-control" name="mobileNumber" placeholder="Enter Your Number" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label" for="form3Example4c">Password</label>
-            <input type="password" id="form3Example4c" class="form-control" name="password" placeholder="Password" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label" for="form3Example4cd">Repeat Password</label>
-            <input type="password" id="form3Example4cd" class="form-control" name="RepeatPassword" placeholder="Repeat your password" required>
-          </div>
-          
-          <div class="form-check text-center mb-4">
-            Already Registered? <a href="/login" style="color: red;">Login</a>
-          </div>
-          <div class="d-grid">
-            <button type="submit" class="btn btn-primary btn-lg">Register</button>
-            <% if(typeof message!=='undefined' ){ %>
-              <h6 class="text-center mt-3" style="color:rgb(255, 38, 0);"><%= message %></h6>
-            <% } %>
-          </div>
-        </form>
+  <section class="vh-100 d-flex align-items-center justify-content-center">
+    <div class="col-lg-5">
+      <div class="card text-black">
+        <div class="card-body p-md-4">
+          <h1 class="text-center fw-bold mb-4" style="font-size: 24px;">Sign up</h1>
+          <form action="/verify" method="post" onsubmit="return validateForm()">
+            <div class="col-md-12 form-group">
+              <label class="form-label" for="name">Your Name</label>
+              <input type="text" id="name" name="name" class="form-control" placeholder="Your Name"
+                onfocus="this.placeholder = ''" onblur="this.placeholder = 'Your Name'" onkeyup="nameValidation()"
+                required>
+              <span id="nameError" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="form3Example3c">Your Email</label>
+              <input type="email" id="form3Example3c" name="email" class="form-control" placeholder="Your Email"
+                onblur="emailValidation()" required>
+              <span id="emailError"></span>
+              <% if(typeof message!=='undefined' ){ %>
+                <span>
+                  <h6 class="text-center mt-3" style="color:rgb(255, 40, 2); padding-right:350px;">
+                    <%= message %>
+                  </h6>
+                </span>
+                <% } %>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="form3Example3c">Enter Your Number</label>
+              <input type="tel" id="form3Example3c1" class="form-control" name="mobileNumber"
+                placeholder="Enter Your Number" onblur="mnoValidation()" required pattern="[0-9]{10}">
+              <span id="mnoError"></span>
+              <% if(typeof phone!=='undefined' ){ %>
+                <h6 class="text-center mt-3" style="color:rgb(255, 40, 2); padding-right:305px;">
+                  <%= phone %>
+                </h6>
+                <% } %>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="form3Example4c">Password</label>
+              <input type="password" id="form3Example4c" class="form-control" name="password" placeholder="Password"
+                onblur="passwordValidation()" required>
+              <span id="passwordError"></span>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="form3Example4cd">Repeat Password</label>
+              <input type="password" id="form3Example4cd" class="form-control" name="RepeatPassword"
+                placeholder="Repeat your password" onblur="validateForm()" required>
+              <span id="repeatPasswordError" style="color:rgb(255, 40, 2); display:none;">Passwords do not match</span>
+              <span id="spaceError" style="color:rgb(255, 40, 2); display:none;">Password cannot contain spaces</span>
+            </div>
+            <div class="form-check text-center mb-4">
+              Already Registered? <a href="/login" style="color: red;">Login</a>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary btn-lg">Register</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
-</section>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+  </section>
+  <script>
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    function emailValidation() {
+      const emailValue = document.getElementById("form3Example3c").value;
+      const emailError = document.getElementById("emailError");
+      const email = document.getElementById("form3Example3c");
+
+      if (!emailValue.match(emailRegex)) {
+        emailError.innerHTML = 'Email not valid';
+        emailError.style.color = 'red';
+        email.style.border = "solid 2px red";
+        return false;
+      }
+
+      emailError.innerHTML = "";
+      email.style.border = "solid 2px green";
+      return true;
+    }
+
+    var mobileRegex = /^[0-9]{10}$/;
+
+    function mnoValidation() {
+      const mnoValue = document.getElementById("form3Example3c1").value;
+      const mnoError = document.getElementById("mnoError");
+      const mno = document.getElementById("form3Example3c1");
+      console.log(mnoValue)
+      if (!mnoValue.match(mobileRegex)) {
+        mnoError.innerHTML = 'Mobile Number not valid';
+        mnoError.style.color = 'red';
+        mno.style.border = "solid 2px red";
+        return false;
+      }
+
+      mnoError.innerHTML = "";
+      mno.style.border = "solid 2px green";
+      return true;
+    }
+
+    function nameValidation() {
+    var name = document.getElementById("name").value.trim();
+    var nameError = document.getElementById("nameError");
+
+    if (name.length == 0) {
+        nameError.innerHTML = 'Name is Required';
+        nameError.style.color = 'red';
+        return false;
+    }
+
+    // Add additional validations if needed
+   
+
+    if (name.length < 3) {
+        nameError.innerHTML = 'Name should have at least 3 characters';
+        nameError.style.color = 'red';
+        return false;
+    }
+
+    nameError.innerHTML = "";
+    return true;
+}
+
+
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+    function passwordValidation() {
+      const passwordValue = document.getElementById("form3Example4c").value;
+      const passwordError = document.getElementById("passwordError");
+      const password = document.getElementById("form3Example4c");
+
+      if (!passwordValue.match(passwordRegex)) {
+        passwordError.innerHTML = 'Password should contain atleast 8 characters ,One Uppercase number and a special character';
+        passwordError.style.color = 'red';
+        password.style.border = "solid 2px red";
+        return false;
+      }
+
+      passwordError.innerHTML = "";
+      password.style.border = "solid 2px green";
+      return true;
+    }
+
+    function validateForm() {
+      // Ensure passwords match
+      var password = document.getElementById("form3Example4c").value;
+      var repeatPassword = document.getElementById("form3Example4cd").value;
+      var repeatPasswordError = document.getElementById("repeatPasswordError");
+
+      if (password !== repeatPassword) {
+        repeatPasswordError.style.display = "block";
+        return false;
+      }
+
+      repeatPasswordError.style.display = "none";
+      return true;
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+    integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+    integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+    crossorigin="anonymous"></script>
 </body>
+
 </html>

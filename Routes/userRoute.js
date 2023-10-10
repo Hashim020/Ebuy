@@ -32,8 +32,11 @@ user_route.get('/logout',userController.userLogout)
 user_route.post('/verifylogin',userController.verifyLogin)
 user_route.get('/MyAccount',auth.requireSignIn,userController.ProfileLoad)
 user_route.get('/MyAccount-address',auth.requireSignIn,addresscontroller.Loadaddressmngmnt);
-user_route.post('/save-address',auth.requireSignIn,addresscontroller.saveaddress)
+user_route.post('/save-address',auth.requireSignIn,addresscontroller.saveaddress);
 user_route.post('/save-address-checkout',auth.requireSignIn,addresscontroller.saveaddresscheckout);
+user_route.get('/Remove-Address/:id',auth.requireSignIn,addresscontroller.RemoveAddres);
+user_route.get('/GetEdit-Address/:id',auth.requireSignIn,addresscontroller.GetEditAddress);
+user_route.post('/save-edited-address',auth.requireSignIn,addresscontroller.PostEditAddress);
 user_route.get('/Order-histoty',auth.requireSignIn,userController.loadorderhistory);
 user_route.get('/view-more/:id',auth.requireSignIn,userController.OrderMoreDetails);
 user_route.post('/update-profile',auth.requireSignIn,userController.profileEdit);

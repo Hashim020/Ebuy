@@ -263,7 +263,7 @@
 														</div>
 														<div class="mb-3">
 															<label for="pincode" class="form-label">Pincode</label>
-															<input type="text" class="form-control" id="pincode"
+															<input type="number" class="form-control" id="pincode"
 																name="pincode" placeholder="Enter pincode" required>
 														</div>
 														<div class="mb-3">
@@ -290,6 +290,62 @@
 							<!-- /Shiping Details -->
 						</div>
 					</div>
+					<script>
+						document.getElementById('addAddressForm').addEventListener('submit', function(event) {
+							// ... (previous validations)
+					
+							// Replace alert with toastr
+							if (name.value.length < 3) {
+								toastr.error('Name must be at least 3 characters long');
+								event.preventDefault();
+								return false;
+							}
+					
+							if (mobile.length !== 10 || isNaN(mobile)) {
+								toastr.error('Mobile must be a 10-digit number');
+								event.preventDefault();
+								return false;
+							}
+					
+							if (landmark.length < 3) {
+								toastr.error('Landmark must be at least 3 characters long');
+								event.preventDefault();
+								return false;
+							}
+					
+							if (city.length < 3) {
+								toastr.error('City must be at least 3 characters long');
+								event.preventDefault();
+								return false;
+							}
+					
+							if (state.length < 3) {
+								toastr.error('State must be at least 3 characters long');
+								event.preventDefault();
+								return false;
+							}
+					
+							if (pincode.length < 6 || isNaN(pincode)) {
+								toastr.error('Pincode must be a number with minimum six characters');
+								event.preventDefault();
+								return false;
+							}
+					
+							if (district.length < 3) {
+								toastr.error('District must be at least 3 characters long');
+								event.preventDefault();
+								return false;
+							}
+					
+							if (address.length < 10) {
+								toastr.error('Address must be at least 10 characters long');
+								event.preventDefault();
+								return false;
+							}
+					
+							return true;
+						});
+					</script>
 
 					<!-- Order Details -->
 					<div class="col-md-5 order-details">
@@ -449,7 +505,14 @@
 									Wallet
 								</label>
 								<div class="caption">
-									<p>Your Current Wallet Balance: <strong style="color: #18f818; font-size: 24px;">₹<%= wallet.balance %></strong></p>
+									<p>Your Current Wallet Balance: <strong style="color: #18f818; font-size: 24px;">
+										<% if (!wallet) { %>
+										  No Wallet
+										<% } else { %>
+										  <%= wallet.balance %>
+										<% } %>
+									  </strong></p>
+									  
 									<p>"Wallet payment: Convenient digital mode, store funds securely,
 										swift transactions, popular for quick online purchases, reducing card details
 										entry."

@@ -5,7 +5,7 @@ const Address = require('../Model/AddressModel');
 const Cart = require('../Model/CartModel');
 const Order = require('../Model/OrderModel');
 const Product = require('../Model/ProductModel');
-const Coupon= require('../Model/CouponModel');
+const Coupon = require('../Model/CouponModel');
 const Wallet = require('../Model/WalletModel');
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
@@ -42,13 +42,46 @@ const loadHome = async (req, res) => {
     const categories = await Category.find().sort({ name: 1 });
     let totalQuantity = 0;
     if (cart) {
-      cart.cartItems.map(item => totalQuantity += item.quantity);
+      totalQuantity = cart.cartItems.reduce((acc, item) => acc + item.quantity, 0);
     }
-    res.render("main", { categories, user1, totalQuantity })
+    
+    // Step 1: Find the total quantity of each product bought
+    const productQuantities = await Order.aggregate([
+      { $unwind: "$items" },
+      { 
+        $group: {
+          _id: "$items.productId",
+          totalQuantity: { $sum: "$items.quantity" }
+        }
+      }
+    ]);
+
+    // Step 2: Sort products based on quantity
+    productQuantities.sort((a, b) => b.totalQuantity - a.totalQuantity);
+
+    // Step 3: Get the top 10 products
+    const topProductIds = productQuantities.slice(0, 10).map(item => item._id);
+    const topProducts = await Product.find({ _id: { $in: topProductIds } });
+
+    // Step 4: Find new products based on createdAt date
+    const today = new Date();
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 7); // Assuming you want to find products added in the last 7 days
+
+    const newProducts = await Product.find({
+      createdAt: { $gte: sevenDaysAgo, $lte: today },
+      is_Listed: true // Only show products that are listed
+    }).limit(10).populate('category');
+  
+    // Render the page with the sorted products, top products, and new products
+    res.render("main", { categories, user1, totalQuantity, topProducts, productQuantities, newProducts });
   } catch (error) {
     console.log(error.message);
   }
 }
+
+
+
 
 const userLogout = async (req, res) => {
   try {
@@ -80,18 +113,24 @@ const validation = async (req, res) => {
     return res.render("Register", { message: "Email already exists" })
   }
   if (existingnumber) {
-    return res.render("Register", { message: "Phone Number Already Exist" })
+    return res.render("Register", { phone: "Phone Number Already Exist" })
   }
-  await client.verify.v2
-    .services(verifySid)
-    .verifications.create({ to: `+91${mobile}`, channel: "sms", })
-    .then((verification) => {
-      console.log(verification.status)
-      res.render('verifyOtp', { mobile })
-    })
-    .catch((error) => {
-      console.log(error.message)
-    })
+  let success = false;
+    let retries = 10;
+  while (!success && retries > 0) {
+    const verification = await client.verify.v2.services(verifySid) 
+      .verifications.create({ to: `+91${mobile}`, channel: "sms", })
+      .then((verification) => {
+        console.log(verification.status)
+        req.session.user = req.body;
+        res.render('verifyOtp', { mobile })
+        success = true;
+      })
+      .catch((error) => {
+        console.log(error.message)
+        retries--;
+      })
+  }
 }
 
 
@@ -352,13 +391,13 @@ const loadcheckout = async (req, res) => {
     if (cart1) {
       cart1.cartItems.map(item => totalQuantity += item.quantity);
     }
-    const coupons= await  Coupon.find({
-      minimumPurchase: { $lte:cart1.cartTotal }, // Find coupons where minimumPurchase is greater than or equal to cartTotal
+    const coupons = await Coupon.find({
+      minimumPurchase: { $lte: cart1.cartTotal }, // Find coupons where minimumPurchase is greater than or equal to cartTotal
       status: 'Active', // Optionally, include a condition for active coupons
     })
     coupons.sort((a, b) => new Date(b.expirationDate) - new Date(a.expirationDate));
-    const wallet= await Wallet.findOne({user:id});
-    res.render('checkout', { wallet,categories, address, cart, cartTotal, totalQuantity,user,coupons,cart1,user1 })
+    const wallet = await Wallet.findOne({ user: id });
+    res.render('checkout', { wallet, categories, address, cart, cartTotal, totalQuantity, user, coupons, cart1, user1 })
   } catch (error) {
 
     console.log(error);
@@ -395,29 +434,29 @@ const Applycoupen = async (req, res) => {
             return res.json({ maximumPrice: false, message: 'Cart total exceeds maximum purchase limit' });
           }
 
-          if(CART.discountCoupon){
+          if (CART.discountCoupon) {
             return res.json({ usedfororder: false, message: 'Cart total exceeds maximum purchase limit' });
           }
-           // Calculate discount value
-           const discountPercentage = code.discount;
-           const discountValue = (discountPercentage / 100) * CART.cartTotal;
- 
-           // Update CART document
-           await Cart.updateOne(
-             { user: userId },
-             { 
-               $inc: { cartTotal: -discountValue },
-               $set: { discountAmount: discountValue, discountCoupon: couponCode }
-             }
-           );
- 
-           // Update user's usedCoupons array
-           await User.updateOne(
-             { _id: userId },
-             { $push: { usedCoupons: { code: couponCode } } }
-           );
- 
-           return res.json({ success: true, discountValue });
+          // Calculate discount value
+          const discountPercentage = code.discount;
+          const discountValue = (discountPercentage / 100) * CART.cartTotal;
+
+          // Update CART document
+          await Cart.updateOne(
+            { user: userId },
+            {
+              $inc: { cartTotal: -discountValue },
+              $set: { discountAmount: discountValue, discountCoupon: couponCode }
+            }
+          );
+
+          // Update user's usedCoupons array
+          await User.updateOne(
+            { _id: userId },
+            { $push: { usedCoupons: { code: couponCode } } }
+          );
+
+          return res.json({ success: true, discountValue });
         } else if (code.status == 'Inactive') {
           return res.json({ validity: false });
         } else {
@@ -537,10 +576,10 @@ const orderplace = async (req, res) => {
       return res.json({ response: response1String, onlinepayment: true, total: userCart.cartTotal });
     } else if (paymentMethod === 'Wallet') {
       const orderId = newOrder._id;
-      const UserId=req.session.user_id;
-      const response= await Walletpayment(orderId,UserId);
+      const UserId = req.session.user_id;
+      const response = await Walletpayment(orderId, UserId);
       console.log(response);
-      return res.json({response});
+      return res.json({ response });
     }
   } catch (error) {
     console.error(error.message);
@@ -586,7 +625,7 @@ async function Walletpayment(orderId, userId) {
         $inc: { balance: -order.total }, // Decrease the balance
         $push: {
           transactions: {
-            orderId:orderId,
+            orderId: orderId,
             Amount: order.total,
             transactionstype: 'Debit',
             transactionsDate: new Date(),
@@ -727,13 +766,13 @@ const thankyouorderplaced = async (req, res) => {
       var userId = req.session.user_id;
       var user1 = await User.findById(userId);
       var cart1 = await Cart.findOne({ user: userId });
-      var user=req.session.user_id
+      var user = req.session.user_id
     }
     let totalQuantity = 0;
     if (cart1) {
       cart1.cartItems.map(item => totalQuantity += item.quantity);
     }
-    res.render('thankyou', { totalQuantity,user,user1 });
+    res.render('thankyou', { totalQuantity, user, user1 });
   } catch (error) {
     console.log(error);
   }
@@ -848,7 +887,7 @@ const OrderMoreDetails = async (req, res) => {
   }
 };
 
-const getMywallet= async (req,res)=>{
+const getMywallet = async (req, res) => {
   try {
     const userId = req.session.user_id; // Assuming you have user sessions set up
     const wallet = await Wallet.findOne({ user: userId }).populate({
@@ -859,9 +898,13 @@ const getMywallet= async (req,res)=>{
       }
     });
 
-    // Sorting transactions based on transactionDate in ascending order
-    wallet.transactions.sort((a, b) => new Date(b.transactionsDate) - new Date(a.transactionsDate));
+    if (!wallet) {
+      // If wallet is not found, you can handle it here
+      res.render('My-Wallet', { wallet });
+      return;
+    }
 
+    wallet.transactions.sort((a, b) => new Date(b.transactionsDate) - new Date(a.transactionsDate));
     res.render('My-Wallet', { wallet });
   } catch (error) {
     console.log(error);
@@ -872,28 +915,29 @@ const getMywallet= async (req,res)=>{
 
 
 
-const  updateCouponStatus= async()=> {
+
+const updateCouponStatus = async () => {
   try {
-      const currentDate = new Date();
-      
-      // Find all active coupons that have expired
-      const expiredCoupons = await Coupon.find({
-          status: 'Active',
-          expirationDate: { $lt: currentDate }
-      });
+    const currentDate = new Date();
 
-      // Update the status of expired coupons to 'Inactive'
-      const updatePromises = expiredCoupons.map(coupon => {
-          coupon.status = 'Inactive';
-          return coupon.save();
-      });
+    // Find all active coupons that have expired
+    const expiredCoupons = await Coupon.find({
+      status: 'Active',
+      expirationDate: { $lt: currentDate }
+    });
 
-      // Execute all update operations
-      await Promise.all(updatePromises);
+    // Update the status of expired coupons to 'Inactive'
+    const updatePromises = expiredCoupons.map(coupon => {
+      coupon.status = 'Inactive';
+      return coupon.save();
+    });
 
-      console.log(`${expiredCoupons.length} coupons have been updated.`);
+    // Execute all update operations
+    await Promise.all(updatePromises);
+
+    console.log(`${expiredCoupons.length} coupons have been updated.`);
   } catch (error) {
-      console.error('Error updating coupons:', error);
+    console.error('Error updating coupons:', error);
   }
 }
 
