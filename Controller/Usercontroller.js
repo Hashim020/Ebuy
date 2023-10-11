@@ -72,9 +72,11 @@ const loadHome = async (req, res) => {
       createdAt: { $gte: sevenDaysAgo, $lte: today },
       is_Listed: true // Only show products that are listed
     }).limit(10).populate('category');
-
-    // Render the page with the sorted products, top products, and new products
-    res.render("main", { categories, user1, totalQuantity, topProducts, productQuantities, newProducts });
+    var message = '';
+    if (req.query.message) {
+      message = req.query.message;
+    }
+    res.render("main", { categories, user1, totalQuantity, topProducts, productQuantities, newProducts, message });
   } catch (error) {
     console.log(error.message);
   }
@@ -179,7 +181,7 @@ const insertUser = async (req, res) => {
                   const code = userDatas.referralCode;
                   const ReferalUsinguser = await User.findOne({ referralCode: userDataSave.referralCode });
                   const Refereduser = await User.findOne({ referralCode: code });
-                  console.log(ReferalUsinguser,Refereduser)
+                  console.log(ReferalUsinguser, Refereduser)
                   const wallet2 = await Wallet.findOne({ user: Refereduser._id });
 
                   const newWallet1 = new Wallet({ user: ReferalUsinguser._id, balance: 100 });
@@ -216,8 +218,9 @@ const insertUser = async (req, res) => {
                     await Promise.all([newWallet1.save(), newWallet2.save()]);
                   }
                 }
-
-                res.redirect('/');
+                const message = "Sucessfully Registered now You login";
+                const encodedMessage = encodeURIComponent(message);
+                res.redirect(`/?message=${encodedMessage}`);
               } else {
                 res.render('Register', { message: "Registration Failed" });
               }
@@ -226,7 +229,7 @@ const insertUser = async (req, res) => {
               res.render('Register', { message: "Registration Failed" });
             }
           } else {
-            res.render('verifyOtp', { otp: "Invalid OTP" ,mobile:userDatas.mobileNumber,});
+            res.render('verifyOtp', { otp: "Invalid OTP", mobile: userDatas.mobileNumber, });
           }
         })
         .catch((error) => {
