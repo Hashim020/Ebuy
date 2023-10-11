@@ -26,6 +26,10 @@ const userSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
+    referralCode:{
+        type:String,
+        required:false
+    },
     usedCoupons: [
         {
             code: {

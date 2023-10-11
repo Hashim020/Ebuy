@@ -44,11 +44,11 @@ const loadHome = async (req, res) => {
     if (cart) {
       totalQuantity = cart.cartItems.reduce((acc, item) => acc + item.quantity, 0);
     }
-    
+
     // Step 1: Find the total quantity of each product bought
     const productQuantities = await Order.aggregate([
       { $unwind: "$items" },
-      { 
+      {
         $group: {
           _id: "$items.productId",
           totalQuantity: { $sum: "$items.quantity" }
@@ -72,7 +72,7 @@ const loadHome = async (req, res) => {
       createdAt: { $gte: sevenDaysAgo, $lte: today },
       is_Listed: true // Only show products that are listed
     }).limit(10).populate('category');
-  
+
     // Render the page with the sorted products, top products, and new products
     res.render("main", { categories, user1, totalQuantity, topProducts, productQuantities, newProducts });
   } catch (error) {
@@ -116,9 +116,9 @@ const validation = async (req, res) => {
     return res.render("Register", { phone: "Phone Number Already Exist" })
   }
   let success = false;
-    let retries = 10;
+  let retries = 10;
   while (!success && retries > 0) {
-    const verification = await client.verify.v2.services(verifySid) 
+    const verification = await client.verify.v2.services(verifySid)
       .verifications.create({ to: `+91${mobile}`, channel: "sms", })
       .then((verification) => {
         console.log(verification.status)
@@ -133,14 +133,25 @@ const validation = async (req, res) => {
   }
 }
 
+// ===================================Referal code Genarator=======================================================
+function generateReferralCode(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let referralCode = '';
 
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    referralCode += characters[randomIndex];
+  }
 
+  return referralCode;
+}
 
+// ======================================================================================================
 const insertUser = async (req, res) => {
   const { otp } = req.body;
 
   try {
-    const userDatas = req.session.user; // Change 'userData' to 'user'
+    const userDatas = req.session.user;
 
     if (!userDatas) {
       res.render('verifyOtp', { message: "User data not found" });
@@ -150,25 +161,72 @@ const insertUser = async (req, res) => {
         .verificationChecks.create({ to: `+91${userDatas.mobileNumber}`, code: otp, validityPeriod: 1000 })
         .then(async (verification_check) => {
           console.log(verification_check.status);
-          const spasswords = await securePassword(userDatas.password);
+          if (verification_check.status === "approved") {
+            const spasswords = await securePassword(userDatas.password);
+            const referralCode = generateReferralCode(10);
+            const user = new User({
+              name: userDatas.name,
+              email: userDatas.email,
+              mobile: userDatas.mobileNumber,
+              password: spasswords,
+              referralCode: referralCode,
+              is_admin: 0
+            });
+            try {
+              const userDataSave = await user.save();
+              if (userDataSave) {
+                if (userDatas.referralCode) {
+                  const code = userDatas.referralCode;
+                  const ReferalUsinguser = await User.findOne({ referralCode: userDataSave.referralCode });
+                  const Refereduser = await User.findOne({ referralCode: code });
+                  console.log(ReferalUsinguser,Refereduser)
+                  const wallet2 = await Wallet.findOne({ user: Refereduser._id });
 
-          const user = new User({
-            name: userDatas.name,
-            email: userDatas.email,
-            mobile: userDatas.mobileNumber,
-            password: spasswords,
-            is_admin: 0
-          });
-          try {
-            const userDataSave = await user.save();
-            if (userDataSave) {
-              res.redirect('/');
-            } else {
+                  const newWallet1 = new Wallet({ user: ReferalUsinguser._id, balance: 100 });
+                  newWallet1.transactions.push({
+                    orderId: null, // Add the relevant orderId if applicable
+                    TransactioName: 'Referral Bonus',
+                    Amount: 100, // Adjust this value as needed
+                    transactionstype: 'Credit',
+                    transactionsDate: new Date()
+                  });
+                  await newWallet1.save()
+
+                  if (wallet2) {
+                    wallet2.balance += 100;
+                    wallet2.transactions.push({
+                      orderId: null, // Add the relevant orderId if applicable
+                      TransactioName: 'Referral Bonus',
+                      Amount: 100, // Adjust this value as needed
+                      transactionstype: 'Credit',
+                      transactionsDate: new Date()
+                    });
+
+                    await wallet2.save(); // Corrected this line, removed Promise.all
+                  } else {
+                    const newWallet2 = new Wallet({ user: Refereduser._id, balance: 100 });
+                    newWallet2.transactions.push({
+                      orderId: null, // Add the relevant orderId if applicable
+                      TransactioName: 'Referral Bonus',
+                      Amount: 100, // Adjust this value as needed
+                      transactionstype: 'Credit',
+                      transactionsDate: new Date()
+                    });
+
+                    await Promise.all([newWallet1.save(), newWallet2.save()]);
+                  }
+                }
+
+                res.redirect('/');
+              } else {
+                res.render('Register', { message: "Registration Failed" });
+              }
+            } catch (error) {
+              console.log(error.message);
               res.render('Register', { message: "Registration Failed" });
             }
-          } catch (error) {
-            console.log(error.message);
-            res.render('Register', { message: "Registration Failed" });
+          } else {
+            res.render('verifyOtp', { otp: "Invalid OTP" ,mobile:userDatas.mobileNumber,});
           }
         })
         .catch((error) => {
@@ -179,6 +237,8 @@ const insertUser = async (req, res) => {
     console.log(error.message);
   }
 };
+
+
 
 
 

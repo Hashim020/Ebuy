@@ -40,6 +40,7 @@
             <thead>
                 <tr>
                     <th>Date</th>
+                    <th>For</th>
                     <th>Transaction Type</th>
                     <th>Amount</th>
                     <th>Order ID</th>
@@ -52,6 +53,9 @@
                         <tr class="<%= transaction.transactionstype === 'Debit' ? 'text-danger' : 'text-success' %>">
                             <td>
                                 <%= transaction.transactionsDate.toISOString().split('T')[0] %>
+                            </td>
+                            <td>
+                                <%= transaction.TransactioName%>
                             </td>
                             <td>
                                 <%= transaction.transactionstype %>

@@ -17,6 +17,10 @@ const walletSchema = new mongoose.Schema({
                 ref: 'Order', // Reference to the Order model
                 required: false
             },
+            TransactioName:{
+                type:String,
+                required:false,
+            },
             Amount: {
                 type: Number,
                 required: false,

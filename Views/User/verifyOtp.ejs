@@ -14,6 +14,9 @@
                 <h5 class="m-0">Mobile phone verification</h5>
                 <span class="mobile-text">Enter the code we just send on your mobile phone</span>
                 <input type="number" name="otp" id="otpInput" placeholder="Enter Your OTP" required>
+                <% if(typeof otp!=='undefined' ){ %>
+                    <h6 style="color:rgb(255, 38, 0);">  <%= otp %></h6>
+                    <% } %>
                 <span>
                     <button type="submit" class="btn btn-success" style="margin-left: 134px; position: absolute; margin-top: 10px;">Verify</button>
                 </span>

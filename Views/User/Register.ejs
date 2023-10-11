@@ -96,6 +96,27 @@
               <span id="repeatPasswordError" style="color:rgb(255, 40, 2); display:none;">Passwords do not match</span>
               <span id="spaceError" style="color:rgb(255, 40, 2); display:none;">Password cannot contain spaces</span>
             </div>
+            <div class="mb-3">
+              <label class="form-label" for="referralCode" id="referralCodeLabel" style="display: none;">Referral Code</label>
+              <input type="text" id="referralCode" name="referralCode" class="form-control" placeholder="Referral Code"
+                style="display: none;">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Do you have a referral code?</label>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="hasReferralCode" id="yesReferral" value="yes">
+                <label class="form-check-label" for="yesReferral">
+                  Yes
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="hasReferralCode" id="noReferral" value="no" checked>
+                <label class="form-check-label" for="noReferral">
+                  No
+                </label>
+              </div>
+            </div>
+            
             <div class="form-check text-center mb-4">
               Already Registered? <a href="/login" style="color: red;">Login</a>
             </div>
@@ -202,6 +223,28 @@
       repeatPasswordError.style.display = "none";
       return true;
     }
+  </script>
+  <script>
+    // Add event listener to toggle referral code input field visibility
+    document.getElementById('yesReferral').addEventListener('change', function() {
+      const referralCodeLabel = document.getElementById('referralCodeLabel');
+      const referralCodeInput = document.getElementById('referralCode');
+  
+      if (this.checked) {
+        referralCodeLabel.style.display = 'block';
+        referralCodeInput.style.display = 'block';
+      }
+    });
+  
+    document.getElementById('noReferral').addEventListener('change', function() {
+      const referralCodeLabel = document.getElementById('referralCodeLabel');
+      const referralCodeInput = document.getElementById('referralCode');
+  
+      if (this.checked) {
+        referralCodeLabel.style.display = 'none';
+        referralCodeInput.style.display = 'none';
+      }
+    });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
     integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"

@@ -58,6 +58,7 @@ user_route.post('/verify',userController.validation)
 user_route.post('/register',userController.insertUser)
 
 
+
 user_route.get("/showproducts/:id",ProductControl.listprocuts);
 user_route.get("/viewproducts/:id",ProductControl.viewproducts);
 user_route.post("/search-items",ProductControl.searchproducts);
