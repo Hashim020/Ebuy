@@ -277,13 +277,13 @@ const verifyLogin = async (req, res) => {
           res.redirect('/')
 
         } else {
-          res.render('login', { message: "Email and Password are Incorrect" });
+          res.render('Login', { message: "Email and Passwords are Incorrect" });
         }
       } else {
-        res.render("login", { message: "Your are blocked" })
+        res.render("Login", { message: "Your are blocked" })
       }
     } else {
-      res.render('login', { message: "Email and Password are Incorrect" });
+      res.render('Login', { message: "Email and Password are Incorrect" });
     }
 
   } catch (error) {
