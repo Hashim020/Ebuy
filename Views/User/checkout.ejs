@@ -723,11 +723,11 @@
 									// Check if the response indicates success
 									if (jsonResponse.success) {
 										// Redirect to the thank-you page
-										window.location.href = 'http://localhost:3000/place-order-thankyou';
+										window.location.href = '/place-order-thankyou';
 									} else if (jsonResponse.onlinepayment) {
 										Razorpaypayment(jsonResponse);
 									} else if (jsonResponse.response.WalletPayment) {
-										window.location.href = 'http://localhost:3000/place-order-thankyou';
+										window.location.href = '/place-order-thankyou';
 									}
 								} else {
 									// Handle non-OK response (e.g., server error)
@@ -803,7 +803,7 @@
 				})
 					.then(response => {
 						if (response) {
-							window.location.href = 'http://localhost:3000/place-order-thankyou';
+							window.location.href = '/place-order-thankyou';
 						} else if (response.success === false) {
 							alert = 'payment failed '
 						}

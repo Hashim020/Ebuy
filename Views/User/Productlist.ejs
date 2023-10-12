@@ -60,7 +60,7 @@
 									class="caret"></span></a>
 							<ul class="dropdown-menu" style="width: auto;white-space: nowrap;">
 								<% categories1.forEach(category=> { %>
-									<a href="http://localhost:3000/showproducts/<%=category?._id%>"
+									<a href="/showproducts/<%=category?._id%>"
 										style="display: block;width: 100%;">
 										<li>
 											<%=category.name%>
@@ -86,7 +86,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<ul class="breadcrumb-tree">
-							<li><a href="http://localhost:3000">Home</a></li>
+							<li><a href="/">Home</a></li>
 							<li><a href="#">
 									<%=categories.name%>
 								</a></li>
@@ -284,7 +284,7 @@
 												<%=categories.name%>
 											</p>
 											<h4 class="product-name"><a
-													href="http://localhost:3000/viewproducts/<%=products?._id%>">
+													href="/viewproducts/<%=products?._id%>">
 													<%=products.name%>
 												</a></h4>
 											<h4 class="product-price">
