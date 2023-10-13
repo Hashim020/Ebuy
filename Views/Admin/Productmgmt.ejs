@@ -61,7 +61,6 @@
                   <th>Name</th>
                   <th>Description</th>
                   <th>Price</th>
-                  <th>Category</th>
                   <th>Stock</th>
                   <th>Image</th>
                   <th>Actions</th>
@@ -74,9 +73,8 @@
                   <td><%= product.name %></td>
                   <td class="truncate-cell"><%= product.description %></td>
                   <td><%= product.price %></td>
-                  <td><%= categories.name %></td>
                   <td><%= product.stock %></td>
-                  <td><img src="../Admin/images/<%= product.images[0] %>" alt="Laptop" width="50"></td>
+                  <td><img src="/images/<%= product.images[0] %>" alt="Laptop" width="50"></td>
                   <td>
                     <div class="btn-group" role="group">
                       <% if (!product.is_Listed) { %>
