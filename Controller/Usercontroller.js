@@ -120,7 +120,7 @@ const validation = async (req, res) => {
   let success = false;
   let retries = 10;
   while (!success && retries > 0) {
-    const verification = await client.verify.v2.services(verifySid)
+     client.verify.v2.services(verifySid)
       .verifications.create({ to: `+91${mobile}`, channel: "sms", })
       .then((verification) => {
         console.log(verification.status)

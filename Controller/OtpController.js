@@ -29,7 +29,7 @@ const forgotPWuserfind = async (req, res) => {
             const existingUser = await User.findOne({ mobile: mobile });
             
             if (existingUser) {
-                const verification = await client.verify.v2.services(verifySid)
+                client.verify.v2.services(verifySid)
                 .verifications.create({
                     to: `+91${mobile}`,
                     channel: "sms",
