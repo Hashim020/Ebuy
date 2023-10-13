@@ -3,41 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Mobile Phone Verification</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="../Ebuy/Views/User/Assets/css/verifyotp.css">
 </head>
-<link rel="stylesheet" href="../Ebuy/Views/User/Assets/css/verifyotp.css">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-<body>
-    <form action="/register" method="post">
-        <div class="d-flex jus  tify-content-center align-items-center container">
-            <div class="card py-5 px-3">
-                <h5 class="m-0">Mobile phone verification</h5>
-                <span class="mobile-text">Enter the code we just send on your mobile phone</span>
-                <input type="number" name="otp" id="otpInput" placeholder="Enter Your OTP" required>
-                <% if(typeof otp!=='undefined' ){ %>
-                    <h6 style="color:rgb(255, 38, 0);">  <%= otp %></h6>
-                    <% } %>
-                <span>
-                    <button type="submit" class="btn btn-success" style="margin-left: 134px; position: absolute; margin-top: 10px;">Verify</button>
-                </span>
-                <div class="text-center mt-5">
-                    <span class="d-block mobile-text">Don't receive the code?</span>
-                    <button type="button"  id="resendButton" class="font-weight-bold text-danger cursor">Resend</button>
-                    <span id="countdown" class="ml-2"></span>
-                </div>
-            </div>
-            <% if(typeof message!=='undefined' ){ %>
-                <h6 style="color:rgb(255, 38, 0);">  <%= message %></h6>
-                <% } %>
+<body class="bg-light d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <form action="/register" method="post" class="card p-4 text-center">
+        <h5 class="mb-3">Mobile Phone Verification</h5>
+        <span class="mobile-text d-block mb-3">Enter the code we just sent to your mobile phone</span>
+        <input type="number" name="otp" id="otpInput" class="form-control mb-3" placeholder="Enter Your OTP" required>
+        <% if(typeof otp !== 'undefined') { %>
+            <div class="text-danger mb-3"><%= otp %></div>
+        <% } %>
+        <button type="submit" class="btn btn-success w-50 mx-auto">Verify</button>
+        <div class="mt-4">
+            <span class="d-block mobile-text mb-2">Didn't receive the code?</span>
+            <button type="button" id="resendButton" class="btn btn-link text-danger">Resend</button>
+            <span id="countdown" class="ml-2"></span>
         </div>
+        <% if(typeof message !== 'undefined') { %>
+            <div class="text-danger mt-4"><%= message %></div>
+        <% } %>
     </form>
 
     <script>
-        // Resend button element
         const resendButton = document.getElementById("resendButton");
         const countdownElement = document.getElementById("countdown");
         const otpInput = document.getElementById("otpInput");
-        let countdown = 30; // Initial countdown value in seconds
+        let countdown = 30;
 
         function enableResendButton() {
             resendButton.disabled = false;
@@ -55,13 +48,13 @@
         }
 
         resendButton.disabled = true;
-        const countdownInterval = setInterval(updateCountdown, 1000); // Update countdown every second
-        updateCountdown(); // Display initial countdown immediately
+        const countdownInterval = setInterval(updateCountdown, 1000);
+        updateCountdown();
 
         setTimeout(() => {
             clearInterval(countdownInterval);
             enableResendButton();
-        }, countdown * 1000); // Enable resend button when countdown reaches 0
+        }, countdown * 1000);
 
         otpInput.addEventListener("input", () => {
             const inputLength = otpInput.value.length;

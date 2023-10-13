@@ -242,7 +242,7 @@
 														</div>
 														<div class="mb-3">
 															<label for="mobile" class="form-label">Mobile</label>
-															<input type="text" class="form-control" id="mobile"
+															<input type="number" class="form-control" id="mobile"
 																name="mobile" placeholder="Enter mobile number"
 																required>
 														</div>
@@ -291,58 +291,58 @@
 						</div>
 					</div>
 					<script>
-						document.getElementById('addAddressForm').addEventListener('submit', function(event) {
+						document.getElementById('addAddressForm').addEventListener('submit', function (event) {
 							// ... (previous validations)
-					
+
 							// Replace alert with toastr
 							if (name.value.length < 3) {
 								toastr.error('Name must be at least 3 characters long');
 								event.preventDefault();
 								return false;
 							}
-					
+
 							if (mobile.length !== 10 || isNaN(mobile)) {
 								toastr.error('Mobile must be a 10-digit number');
 								event.preventDefault();
 								return false;
 							}
-					
+
 							if (landmark.length < 3) {
 								toastr.error('Landmark must be at least 3 characters long');
 								event.preventDefault();
 								return false;
 							}
-					
+
 							if (city.length < 3) {
 								toastr.error('City must be at least 3 characters long');
 								event.preventDefault();
 								return false;
 							}
-					
+
 							if (state.length < 3) {
 								toastr.error('State must be at least 3 characters long');
 								event.preventDefault();
 								return false;
 							}
-					
+
 							if (pincode.length < 6 || isNaN(pincode)) {
 								toastr.error('Pincode must be a number with minimum six characters');
 								event.preventDefault();
 								return false;
 							}
-					
+
 							if (district.length < 3) {
 								toastr.error('District must be at least 3 characters long');
 								event.preventDefault();
 								return false;
 							}
-					
+
 							if (address.length < 10) {
 								toastr.error('Address must be at least 10 characters long');
 								event.preventDefault();
 								return false;
 							}
-					
+
 							return true;
 						});
 					</script>
@@ -506,13 +506,13 @@
 								</label>
 								<div class="caption">
 									<p>Your Current Wallet Balance: <strong style="color: #18f818; font-size: 24px;">
-										<% if (!wallet) { %>
-										  No Wallet
-										<% } else { %>
-										  <%= wallet.balance %>
-										<% } %>
-									  </strong></p>
-									  
+											<% if (!wallet) { %>
+												No Wallet
+												<% } else { %>
+													<%= wallet.balance %>
+														<% } %>
+										</strong></p>
+
 									<p>"Wallet payment: Convenient digital mode, store funds securely,
 										swift transactions, popular for quick online purchases, reducing card details
 										entry."
@@ -568,52 +568,52 @@
 
 		<!-- FOOTER -->
 		<%- include('../Includes/Footer.ejs')%>
-		<!-- /FOOTER -->
+			<!-- /FOOTER -->
 
-		<!-- jQuery Plugins -->
+			<!-- jQuery Plugins -->
 
 
-		<script>
-			function applyDiscount() {
-				var couponCode = document.getElementById("couponCode").value;
-				if (couponCode) {
-					fetch('/Applycoupen', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify({ couponCode: couponCode }),
-					})
-						.then(response => response.json())
-						.then(data => {
-							if (data.success === true) {
-								toastr.success('Coupon Applied!', 'Updated Total: $' + data.discountValue, { timeOut: 2000, progressBar: true });
-								setTimeout(() => {
-									window.location.reload();
-								}, 1000);
-							} else if (data.success === false) {
-								toastr.error('Invalid Coupon Code', 'Please enter a valid coupon code.');
-							} else if (data.validity === false) {
-								toastr.error('Coupon Expired', 'Please enter a valid coupon code.');
-							} else if (data.minimumPrice === false) {
-								toastr.error('Purchase Amount is less than coupon minimum purchase amount', 'Please enter a valid coupon code.');
-							} else if (data.maximumPrice === false) {
-								toastr.error('Purchase Amount is Greater than coupon upper purchase amount', 'Please enter a valid coupon code.');
-							} else if (data.used === false) {
-								toastr.error('coupon is already used', 'Please enter a another coupon code.');
-							}
+			<script>
+				function applyDiscount() {
+					var couponCode = document.getElementById("couponCode").value;
+					if (couponCode) {
+						fetch('/Applycoupen', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+							body: JSON.stringify({ couponCode: couponCode }),
 						})
-						.catch(error => {
-							console.error('Error:', error);
-						});
-				} else {
-					toastr.error('Missing Coupon Code', 'Please enter a coupon code.');
+							.then(response => response.json())
+							.then(data => {
+								if (data.success === true) {
+									toastr.success('Coupon Applied!', 'Updated Total: $' + data.discountValue, { timeOut: 2000, progressBar: true });
+									setTimeout(() => {
+										window.location.reload();
+									}, 1000);
+								} else if (data.success === false) {
+									toastr.error('Invalid Coupon Code', 'Please enter a valid coupon code.');
+								} else if (data.validity === false) {
+									toastr.error('Coupon Expired', 'Please enter a valid coupon code.');
+								} else if (data.minimumPrice === false) {
+									toastr.error('Purchase Amount is less than coupon minimum purchase amount', 'Please enter a valid coupon code.');
+								} else if (data.maximumPrice === false) {
+									toastr.error('Purchase Amount is Greater than coupon upper purchase amount', 'Please enter a valid coupon code.');
+								} else if (data.used === false) {
+									toastr.error('coupon is already used', 'Please enter a another coupon code.');
+								}
+							})
+							.catch(error => {
+								console.error('Error:', error);
+							});
+					} else {
+						toastr.error('Missing Coupon Code', 'Please enter a coupon code.');
+					}
 				}
-			}
-		</script>
+			</script>
 
 
-		<!-- <script>
+			<!-- <script>
 			function applyDiscount() {
 				var couponCode = document.getElementById("couponCode").value;
 				if (couponCode) {
@@ -681,166 +681,165 @@
 			}
 		</script> -->
 
-		<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+			<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 
-		<script>
-			document.addEventListener("DOMContentLoaded", function () {
-				const placeOrderButton = document.getElementById("placeOrderButton");
-				const addressForm = document.getElementById("addressForm");
+			<script>
+				document.addEventListener("DOMContentLoaded", function () {
+					const placeOrderButton = document.getElementById("placeOrderButton");
+					const addressForm = document.getElementById("addressForm");
 
-				placeOrderButton.addEventListener("click", function () {
-					// Get the selected address
-					event.preventDefault();
-					const selectedAddress = addressForm.querySelector(
-						'input[name="selectedAddress"]:checked'
-					);
-
-					if (selectedAddress) {
-						const addressId = selectedAddress.value;
-
-						// Get the selected payment method
-						const selectedPayment = document.querySelector(
-							'input[name="payment"]:checked'
+					placeOrderButton.addEventListener("click", function () {
+						// Get the selected address
+						event.preventDefault();
+						const selectedAddress = addressForm.querySelector(
+							'input[name="selectedAddress"]:checked'
 						);
 
-						if (selectedPayment) {
-							const paymentMethod = selectedPayment.id;
+						if (selectedAddress) {
+							const addressId = selectedAddress.value;
+							// Get the selected payment method
+							const selectedPayment = document.querySelector(
+								'input[name="payment"]:checked'
+							);
 
-							// Send a POST request with the selected address ID and payment method
-							fetch("/place-order", {
-								method: "POST",
-								headers: {
-									"Content-Type": "application/json",
-								},
-								body: JSON.stringify({
-									addressId: addressId,
-									paymentMethod: paymentMethod,
-								}),
-							}).then(async (response) => {
-								if (response.ok) {
-									const jsonResponse = await response.json(); // Parse the JSON response
-									// Check if the response indicates success
-									if (jsonResponse.success) {
-										// Redirect to the thank-you page
-										window.location.href = '/place-order-thankyou';
-									} else if (jsonResponse.onlinepayment) {
-										Razorpaypayment(jsonResponse);
-									} else if (jsonResponse.response.WalletPayment) {
-										window.location.href = '/place-order-thankyou';
+							if (selectedPayment) {
+								const paymentMethod = selectedPayment.id;
+
+								// Send a POST request with the selected address ID and payment method
+								fetch("/place-order", {
+									method: "POST",
+									headers: {
+										"Content-Type": "application/json",
+									},
+									body: JSON.stringify({
+										addressId: addressId,
+										paymentMethod: paymentMethod,
+									}),
+								}).then(async (response) => {
+									if (response.ok) {
+										const jsonResponse = await response.json(); // Parse the JSON response
+										// Check if the response indicates success
+										if (jsonResponse.success) {
+											// Redirect to the thank-you page
+											window.location.href = '/place-order-thankyou';
+										} else if (jsonResponse.onlinepayment) {
+											Razorpaypayment(jsonResponse);
+										} else if (jsonResponse.response.WalletPayment) {
+											window.location.href = '/place-order-thankyou';
+										}
+									} else {
+										// Handle non-OK response (e.g., server error)
+										alert('Failed to place the order.');
 									}
-								} else {
-									// Handle non-OK response (e.g., server error)
-									alert('Failed to place the order.');
-								}
-							})
-								.catch((error) => {
-									console.error('An error occurred:', error);
-								});
+								})
+									.catch((error) => {
+										console.error('An error occurred:', error);
+									});
 
+							} else {
+								// Handle the case where no payment method is selected
+								alert("Please select a payment method before placing the order.");
+							}
 						} else {
-							// Handle the case where no payment method is selected
-							alert("Please select a payment method before placing the order.");
+							// Handle the case where no address is selected
+							alert("Please select an address before placing the order.");
 						}
-					} else {
-						// Handle the case where no address is selected
-						alert("Please select an address before placing the order.");
+					});
+				});
+
+
+				async function Razorpaypayment(jsonResponse) {
+					console.log(jsonResponse);
+					const responseObj = JSON.parse(jsonResponse.response);
+					console.log(responseObj.id);
+					var options = {
+						"key": "rzp_test_ilrzwP3bprW0tn", // Enter the Key ID generated from the Dashboard
+						"amount": responseObj.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+						"currency": "INR",
+						"name": "Ebuy",
+						"description": "Test Transaction",
+						"image": "https://example.com/your_logo",
+						"order_id": responseObj.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+						"handler": function (response) {
+							// alert(response.razorpay_payment_id);
+							// alert(response.razorpay_order_id);
+							// alert(response.razorpay_signature);
+							verifypayment(response, responseObj);
+						},
+						"prefill": {
+							"name": "Hashim.M.A",
+							"email": "ma.hashim200@gmail.com",
+							"contact": "9000090000"
+						},
+						"notes": {
+							"address": "Razorpay Corporate Office"
+						},
+						"theme": {
+							"color": "#3399cc"
+						}
+
+					}
+
+					var rzp1 = new Razorpay(options);
+					rzp1.open();
+
+
+				};
+
+
+
+				function verifypayment(response, responseObj) {
+					fetch('verify-payment', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({
+							response,
+							responseObj
+						})
+					})
+						.then(response => {
+							if (response) {
+								window.location.href = '/place-order-thankyou';
+							} else if (response.success === false) {
+								alert = 'payment failed '
+							}
+							return response.json();
+						})
+						.catch(error => {
+							console.error('Error:', error);
+						});
+				}
+
+
+			</script>
+
+			<script>
+				const addAddressButton = document.getElementById("addAddressButton");
+				const modal = document.getElementById("modal");
+				const closeModal = document.getElementById("closeModal");
+
+				addAddressButton.addEventListener("click", () => {
+					modal.style.display = "block";
+				});
+
+				closeModal.addEventListener("click", () => {
+					modal.style.display = "none";
+				});
+
+				window.addEventListener("click", (event) => {
+					if (event.target === modal) {
+						modal.style.display = "none";
 					}
 				});
-			});
-
-
-			async function Razorpaypayment(jsonResponse) {
-				console.log(jsonResponse);
-				const responseObj = JSON.parse(jsonResponse.response);
-				console.log(responseObj.id);
-				var options = {
-					"key": "rzp_test_ilrzwP3bprW0tn", // Enter the Key ID generated from the Dashboard
-					"amount": responseObj.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-					"currency": "INR",
-					"name": "Ebuy",
-					"description": "Test Transaction",
-					"image": "https://example.com/your_logo",
-					"order_id": responseObj.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-					"handler": function (response) {
-						// alert(response.razorpay_payment_id);
-						// alert(response.razorpay_order_id);
-						// alert(response.razorpay_signature);
-						verifypayment(response, responseObj);
-					},
-					"prefill": {
-						"name": "Hashim.M.A",
-						"email": "ma.hashim200@gmail.com",
-						"contact": "9000090000"
-					},
-					"notes": {
-						"address": "Razorpay Corporate Office"
-					},
-					"theme": {
-						"color": "#3399cc"
-					}
-
-				}
-
-				var rzp1 = new Razorpay(options);
-				rzp1.open();
-
-
-			};
-
-
-
-			function verifypayment(response, responseObj) {
-				fetch('verify-payment', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						response,
-						responseObj
-					})
-				})
-					.then(response => {
-						if (response) {
-							window.location.href = '/place-order-thankyou';
-						} else if (response.success === false) {
-							alert = 'payment failed '
-						}
-						return response.json();
-					})
-					.catch(error => {
-						console.error('Error:', error);
-					});
-			}
-
-
-		</script>
-
-		<script>
-			const addAddressButton = document.getElementById("addAddressButton");
-			const modal = document.getElementById("modal");
-			const closeModal = document.getElementById("closeModal");
-
-			addAddressButton.addEventListener("click", () => {
-				modal.style.display = "block";
-			});
-
-			closeModal.addEventListener("click", () => {
-				modal.style.display = "none";
-			});
-
-			window.addEventListener("click", (event) => {
-				if (event.target === modal) {
-					modal.style.display = "none";
-				}
-			});
-		</script>
-		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+			</script>
+			<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
 </body>
 

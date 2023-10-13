@@ -6,9 +6,10 @@ const bcrypt = require('bcrypt')
 
 
 const accountSid = process.env.accountSid;
-const authToken = process.env.authToken;
+const authToken = process.env.authToken
 const verifySid = process.env.verifySid;
-const client = require("twilio")(accountSid, authToken,accountSid);
+
+const client = require("twilio")(accountSid, authToken);
 
 
 const Forgotpassword=async(req,res)=>{
@@ -21,7 +22,7 @@ const Forgotpassword=async(req,res)=>{
 
 const forgotPWuserfind = async (req, res) => {
     let success = false;
-    let retries = 10;
+    let retries = 1;
     while (!success && retries > 0) {
         try {
             const mobile = req.body.mobileNumber;
