@@ -110,13 +110,15 @@ const unblockuser = async (req, res) => {
 
 const loadOrdermanagement = async (req, res) => {
     try {
-        const Orders = await Order.find().populate('user'); // Use populate to retrieve user data
-        console.log(Orders)
+        const Orders = await Order.find().populate('user')
+            .sort({ createdAt: 1 }); // Sort by createdAt in descending order
+        console.log(Orders);
         res.render('ordermanagement', { Orders });
     } catch (error) {
         console.log(error);
     }
 }
+
 
 const moredetailedorder = async (req, res) => {
     try {
@@ -124,13 +126,15 @@ const moredetailedorder = async (req, res) => {
         const order = await Order.findById(orderId)
             .populate('user')
             .populate("items.productId")
-            .populate('address');
+            .populate('address')
+            .sort({ createdAt: -1 }); // Sort by createdAt in descending order
         console.log(order);
         res.render('Detailedvieworder', { order })
     } catch (error) {
         console.log(error);
     }
 }
+
 
 
 const updateOrderStatusByAdmin = async (req, res) => {

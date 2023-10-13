@@ -108,19 +108,27 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.min.css
 
   <!-- Display username and shipping address only once for each order -->
   <div class="row mt-4">
+    <div class="row mt-4">
       <div class="col-md-12">
-          <h5 class="text-center">Username: <%= order.user.name %></h5>
+          <h5 class="text-center">Username: <%= order.user ? (order.user.name ? order.user.name : 'N/A') : 'N/A' %></h5>
       </div>
+  </div>
 
       <!-- Shipping Address Box -->
       <div class="col-md-12 mb-3">
           <div class="border p-3">
               <h5>Shipping Address</h5>
-              <p><strong>Name: <%= order.user.name %></strong></p>
-              <p><strong>Address: <%= order.address.address %></strong></p>
-              <p><strong>City: <%= order.address.city %></strong></p>
-              <p><strong>State: <%= order.address.state %></strong></p>
-              <p><strong>Pin Code: <%= order.address.pincode %></strong></p>
+              <% if (order.address) { %>
+                <p><strong>Address: <%= order.address.address %></strong></p>
+                <p><strong>City: <%= order.address.city %></strong></p>
+                <p><strong>State: <%= order.address.state %></strong></p>
+                <p><strong>Pin Code: <%= order.address.pincode %></strong></p>
+            <% } else { %>
+                <p><strong>Address: N/A</strong></p>
+                <p><strong>City: N/A</strong></p>
+                <p><strong>State: N/A</strong></p>
+                <p><strong>Pin Code: N/A</strong></p>
+            <% } %>
           </div>
       </div>
   </div>
