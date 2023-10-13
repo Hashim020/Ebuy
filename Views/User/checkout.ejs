@@ -690,23 +690,17 @@
 					const addressForm = document.getElementById("addressForm");
 
 					placeOrderButton.addEventListener("click", function () {
-						// Get the selected address
 						event.preventDefault();
-						const selectedAddress = addressForm.querySelector(
-							'input[name="selectedAddress"]:checked'
-						);
 
-						if (selectedAddress) {
-							const addressId = selectedAddress.value;
-							// Get the selected payment method
-							const selectedPayment = document.querySelector(
-								'input[name="payment"]:checked'
-							);
+						try {
+							const selectedAddress = addressForm.querySelector('input[name="selectedAddress"]:checked');
+							const addressId = selectedAddress ? selectedAddress.value : null;
 
-							if (selectedPayment) {
+							const selectedPayment = document.querySelector('input[name="payment"]:checked');
+
+							if (addressId && selectedPayment) {
 								const paymentMethod = selectedPayment.id;
 
-								// Send a POST request with the selected address ID and payment method
 								fetch("/place-order", {
 									method: "POST",
 									headers: {
@@ -718,10 +712,8 @@
 									}),
 								}).then(async (response) => {
 									if (response.ok) {
-										const jsonResponse = await response.json(); // Parse the JSON response
-										// Check if the response indicates success
+										const jsonResponse = await response.json();
 										if (jsonResponse.success) {
-											// Redirect to the thank-you page
 											window.location.href = '/place-order-thankyou';
 										} else if (jsonResponse.onlinepayment) {
 											Razorpaypayment(jsonResponse);
@@ -729,21 +721,18 @@
 											window.location.href = '/place-order-thankyou';
 										}
 									} else {
-										// Handle non-OK response (e.g., server error)
-										alert('Failed to place the order.');
+										toastr.error('Failed to place the order.');
 									}
-								})
-									.catch((error) => {
-										console.error('An error occurred:', error);
-									});
-
+								}).catch((error) => {
+									console.error('An error occurred:', error);
+									toastr.error('An error occurred. Please try again.');
+								});
 							} else {
-								// Handle the case where no payment method is selected
-								alert("Please select a payment method before placing the order.");
+								toastr.warning("Make Sure You have Choosed Address and payment Option for Your order");
 							}
-						} else {
-							// Handle the case where no address is selected
-							alert("Please select an address before placing the order.");
+						} catch (error) {
+							console.error('An error occurred:', error);
+							toastr.error('Please add address to proceed');
 						}
 					});
 				});

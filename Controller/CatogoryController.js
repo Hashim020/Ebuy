@@ -31,14 +31,14 @@ const addcatogory = async (req, res) => {
         const categories = await Category.find();
 
         // Send a success response with the categories data
-        res.render("catogory", {message:"New Category Added Successfully", categories });
+        res.render("Catogory", {message:"New Category Added Successfully", categories });
     }else{
         const categories = await Category.find();
-        res.render("catogory",{message:"CANNOT ADD!!!!",categories})
+        res.render("Catogory",{message:"CANNOT ADD!!!!",categories})
     }
     } catch (error) {
         console.error(error);
-        res.render("catogory", { message: 'Fail to save Category.' });
+        res.render("Catogory", { message: 'Fail to save Category.' });
     }
 }
 
