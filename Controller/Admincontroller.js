@@ -111,7 +111,7 @@ const unblockuser = async (req, res) => {
 const loadOrdermanagement = async (req, res) => {
     try {
         const Orders = await Order.find().populate('user'); // Use populate to retrieve user data
-
+        console.log(Orders)
         res.render('ordermanagement', { Orders });
     } catch (error) {
         console.log(error);

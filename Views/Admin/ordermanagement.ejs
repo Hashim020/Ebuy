@@ -48,8 +48,9 @@
                   <%= order.OrderId %>
                 </td>
                 <td>
-                  <%= order.user.name %>
+                  <%= order.user ? order.user.name : 'N/A' %>
                 </td>
+                
                 <td>
                   Total Quantity:
                   <% let totalQuantity=0; %>
