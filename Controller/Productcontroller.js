@@ -39,14 +39,13 @@ const addProduct = async (req, res) => {
         upload.array('images', 4)(req, res, async (err) => {
             if (err) {
                 console.error(err); 
-                console.log('error product adding')
-                return res.redirect('/Productmmgmt'); 
+                return res.redirect('/admin/Productmmgmt'); 
             }
-            
+
             // const { name, description, price, category } = req.body;
             const imageNames = req.files.map((file) => path.basename(file.path));
             const category = await Category.findOne({_id:req.body.category})
-            
+
             const newProduct = new Product({
                 name:req.body.name,
                 description:req.body.description,
@@ -54,17 +53,16 @@ const addProduct = async (req, res) => {
                 category:category._id,
                 stock:req.body.stock,
                 offerprice:req.body.offerprice,
-                
+
                 images: imageNames,
             });
-            console.log('no error')
 
             const ProductResult = await newProduct.save();
             
         
-            
+            console.log('successfully added')
            
-            res.redirect('/Productmmgmt'); 
+            res.redirect('Productmmgmt'); 
 
         });
     } catch (error) {
