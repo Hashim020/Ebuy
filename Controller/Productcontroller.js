@@ -1,8 +1,8 @@
 const Category = require('../Model/CatogoryModel');
 const Product = require('../Model/ProductModel');
-const Cart= require('../Model/CartModel');
+const Cart = require('../Model/CartModel');
 const path = require('path');
-const USER=require('../Model/userModel')
+const USER = require('../Model/userModel')
 
 
 const multer = require('multer');
@@ -34,35 +34,35 @@ const upload = multer({
 
 
 const addProduct = async (req, res) => {
-    
+
     try {
         upload.array('images', 4)(req, res, async (err) => {
             if (err) {
-                console.error(err); 
-                return res.redirect('/admin/Productmmgmt'); 
+                console.error(err);
+                return res.redirect('/admin/Productmmgmt');
             }
 
             // const { name, description, price, category } = req.body;
             const imageNames = req.files.map((file) => path.basename(file.path));
-            const category = await Category.findOne({_id:req.body.category})
+            const category = await Category.findOne({ _id: req.body.category })
 
             const newProduct = new Product({
-                name:req.body.name,
-                description:req.body.description,
-                price:req.body.price,
-                category:category._id,
-                stock:req.body.stock,
-                offerprice:req.body.offerprice,
+                name: req.body.name,
+                description: req.body.description,
+                price: req.body.price,
+                category: category._id,
+                stock: req.body.stock,
+                offerprice: req.body.offerprice,
 
                 images: imageNames,
             });
 
             const ProductResult = await newProduct.save();
-            
-        
+
+
             console.log('successfully added')
-           
-            res.redirect('Productmmgmt'); 
+
+            res.redirect('Productmmgmt');
 
         });
     } catch (error) {
@@ -78,11 +78,11 @@ const addProduct = async (req, res) => {
 
 
 
-const Loadproduct= async(req,res)=>{
+const Loadproduct = async (req, res) => {
     try {
-        const categories=await Category.find({},{_id:0,name:1})
-        const products= await Product.find()
-        res.render('Productmgmt',{categories,products}); // Pass the categories to the template
+        const categories = await Category.find({}, { _id: 0, name: 1 })
+        const products = await Product.find()
+        res.render('Productmgmt', { categories, products }); // Pass the categories to the template
     } catch (error) {
         console.error(error);
         res.status(500).send('Server Error');
@@ -93,11 +93,11 @@ const Loadproduct= async(req,res)=>{
 
 
 
-const Loadprodutaddform= async(req,res)=>{
+const Loadprodutaddform = async (req, res) => {
     try {
-        var num=0;
-        const categories=await Category.find()
-        res.render('addproduct',{categories,num}); // Pass the categories to the template
+        var num = 0;
+        const categories = await Category.find()
+        res.render('addproduct', { categories, num }); // Pass the categories to the template
     } catch (error) {
         console.error(error);
         res.status(500).send('Server Error');
@@ -108,28 +108,28 @@ const Loadprodutaddform= async(req,res)=>{
 
 
 
-const listprocuts=async (req,res,id)=>{
+const listprocuts = async (req, res, id) => {
     try {
-        id=req.params.id
-        if(req.session){
-            var userId=req.session.user_id
-            var cart1=await Cart.findOne({user:userId});
+        id = req.params.id
+        if (req.session) {
+            var userId = req.session.user_id
+            var cart1 = await Cart.findOne({ user: userId });
             var user1 = await USER.findById(userId);
-          }
-          let totalQuantity = 0;
-          if(cart1){
+        }
+        let totalQuantity = 0;
+        if (cart1) {
             cart1.cartItems.map(item => totalQuantity += item.quantity);
-          }
-        if(id){
-        const categories=await Category.findOne({_id:id},{name:1});
-        const products=await Product.find({category:id,is_Listed:true});
-        const categories1=await Category.find();
-        res.render("Productlist",{categories,products,categories1,totalQuantity,user1})
+        }
+        if (id) {
+            const categories = await Category.findOne({ _id: id }, { name: 1 });
+            const products = await Product.find({ category: id, is_Listed: true });
+            const categories1 = await Category.find();
+            res.render("Productlist", { categories, products, categories1, totalQuantity, user1 })
 
-    }        
-        
-    } catch (error) {  
-        
+        }
+
+    } catch (error) {
+
     }
 }
 
@@ -137,14 +137,14 @@ const listprocuts=async (req,res,id)=>{
 
 
 
-const unlistproducts=async (req,res)=>{
+const unlistproducts = async (req, res) => {
     try {
-        id=req.params.id;
+        id = req.params.id;
 
-        await Product.findByIdAndUpdate({_id:id},{$set:{is_Listed:false}})
+        await Product.findByIdAndUpdate({ _id: id }, { $set: { is_Listed: false } })
         res.redirect("http://localhost:3000/admin/Productmmgmt")
     } catch (error) {
-        
+
     }
 }
 
@@ -153,14 +153,14 @@ const unlistproducts=async (req,res)=>{
 
 
 
-const relistproducts=async (req,res)=>{
+const relistproducts = async (req, res) => {
     try {
-        id=req.params.id;
+        id = req.params.id;
 
-        await Product.findByIdAndUpdate({_id:id},{$set:{is_Listed:true}})
+        await Product.findByIdAndUpdate({ _id: id }, { $set: { is_Listed: true } })
         res.redirect("http://localhost:3000/admin/Productmmgmt")
     } catch (error) {
-        
+
     }
 }
 
@@ -170,14 +170,14 @@ const relistproducts=async (req,res)=>{
 
 
 
-const producteditform=async (req,res)=>{
+const producteditform = async (req, res) => {
     try {
-        const id=req.params.id
-        const product = await Product.findOne({_id:id});
-        const categories=await Category.find();
+        const id = req.params.id
+        const product = await Product.findOne({ _id: id });
+        const categories = await Category.find();
         // console.log(PRODUCTS,categories);
-        res.render("editproducts",{product,categories})
-        
+        res.render("editproducts", { product, categories })
+
     } catch (error) {
         console.log(error);
     }
@@ -193,35 +193,35 @@ const producteditform=async (req,res)=>{
 
 
 
-const Proceedtoeditprdct =async(req,res)=>{
+const Proceedtoeditprdct = async (req, res) => {
     try {
         upload.array('images')(req, res, async (err) => {
-            if (err) {  
+            if (err) {
                 console.error(err);
                 return res.redirect('/admin');
             }
             var existingImages = req.body.existingImages || []
             const removedImages = req.body.removedImages || [];
-            var newImages  = []
-            for(let i=0;i<req.files.length;i++){
-              if(req.files[i]!==undefined){
-                newImages.push(req.files[i].filename)
-              }
+            var newImages = []
+            for (let i = 0; i < req.files.length; i++) {
+                if (req.files[i] !== undefined) {
+                    newImages.push(req.files[i].filename)
+                }
             }
             const remainingImages = existingImages.filter(image => !removedImages.includes(image));
-        
-  
+
+
             const productId = req.params.id;
             const existingProduct = await Product.findById(productId);
-  
+
             const category = await Category.findOne({ _id: req.body.category });
-  
+
             // Check if new images are uploaded
             // let newImageNames = existingProduct.images;
             // if (req.files && req.files.length > 0) {
             //     newImageNames = req.files.map((file) => path.basename(file.path));
             // }
-  
+
             const updatedProduct = await Product.findByIdAndUpdate(
                 productId,
                 {
@@ -231,11 +231,11 @@ const Proceedtoeditprdct =async(req,res)=>{
                     category: category._id,
                     stock: req.body.stock,
                     offerprice: req.body.offerprice,
-                    images:remainingImages.concat(newImages),
+                    images: remainingImages.concat(newImages),
                 },
                 { new: true }
             );
-  
+
             res.redirect('http://localhost:3000/admin/Productmmgmt');
         });
     } catch (error) {
@@ -246,26 +246,85 @@ const Proceedtoeditprdct =async(req,res)=>{
 
 
 
-const viewproducts=async (req,res)=>{
+const viewproducts = async (req, res) => {
     try {
-        const id=req.params.id;
-        if(req.session){
-            var userId=req.session.user_id
+        const id = req.params.id;
+        if (req.session) {
+            var userId = req.session.user_id
             var user1 = await USER.findById(userId);
-            var cart1=await Cart.findOne({user:userId});
-          }
-          let totalQuantity = 0;
-          if(cart1){
+            var cart1 = await Cart.findOne({ user: userId });
+        }
+        let totalQuantity = 0;
+        if (cart1) {
             cart1.cartItems.map(item => totalQuantity += item.quantity);
-          }
-        const categories1=await Category.find()
-        const viewproduct=await Product.findOne({_id:id})
-        const categories=await Category.findOne({_id:viewproduct.category})
-        res.render("Viewproduct",{viewproduct,categories,categories1,totalQuantity,user1})
+        }
+        const categories1 = await Category.find()
+        const viewproduct = await Product.findOne({ _id: id })
+        const categories = await Category.findOne({ _id: viewproduct.category })
+        res.render("Viewproduct", { viewproduct, categories, categories1, totalQuantity, user1 })
     } catch (error) {
         console.log(error);
     }
 }
+
+const sortviewproduct = async (req, res) => {
+    try {
+        const categoryId = req.query.category_id;
+        const option = parseInt(req.query.option); // Convert option to an integer
+
+        // Find products based on category ID
+        const products = await Product.find({ category: categoryId });
+
+        // Sort the products based on the selected option
+        let sortedProducts;
+        switch (option) {
+            case 0:
+                sortedProducts = products.sort((a, b) => a.offerprice - b.offerprice); // Low to high price
+                break;
+            case 1:
+                sortedProducts = products.sort((a, b) => b.offerprice - a.offerprice); // High to low price
+                break;
+            case 2:
+                sortedProducts = products.sort((a, b) => b.createdAt - a.createdAt); // Date of arrival
+                break;
+            default:
+                sortedProducts = products; // No specific sorting
+        }
+
+        // Include any additional data needed for rendering
+        const id = categoryId;
+        let user1, cart1, totalQuantity;
+        if (req.session) {
+            const userId = req.session.user_id;
+            user1 = await USER.findById(userId);
+            cart1 = await Cart.findOne({ user: userId });
+
+            totalQuantity = 0;
+            if (cart1) {
+                cart1.cartItems.map(item => totalQuantity += item.quantity);
+            }
+        }
+
+        const categories = await Category.findOne({ _id: id }, { name: 1 });
+        const categories1 = await Category.find();
+
+        // Render the page with sorted products and additional data
+        res.render("Productlist", {
+            categories,
+            products: sortedProducts,
+            categories1,
+            totalQuantity,
+            user1
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+
+
+
 
 
 
@@ -277,26 +336,26 @@ const viewproducts=async (req,res)=>{
 
 const searchproducts = async (req, res) => {
     try {
-        
+
         // Create a regular expression pattern for case-insensitive search
-        
+
         const query = req.body.qeury;
-        const rgx = new RegExp(query,"gi")
+        const rgx = new RegExp(query, "gi")
         const products = await Product.find({
             name: { $regex: rgx }
         });
-        const categories1= await Category.find()
-        const categories=await Category.find()
-        if(req.session){
-            var userId=req.session.user_id
-            var cart1=await Cart.findOne({user:userId});
-          }
-          let totalQuantity = 0;
-          if(cart1){
+        const categories1 = await Category.find()
+        const categories = await Category.find()
+        if (req.session) {
+            var userId = req.session.user_id
+            var cart1 = await Cart.findOne({ user: userId });
+        }
+        let totalQuantity = 0;
+        if (cart1) {
             cart1.cartItems.map(item => totalQuantity += item.quantity);
-          };
-          var user1 = await USER.findById(userId);
-        res.render('Productlist', { products,categories1,categories,totalQuantity,user1 }); // Adjust 'searchResults' to your template name
+        };
+        var user1 = await USER.findById(userId);
+        res.render('Productlist', { products, categories1, categories, totalQuantity, user1 }); // Adjust 'searchResults' to your template name
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error'); // Send an error response
@@ -328,7 +387,7 @@ const searchproducts = async (req, res) => {
 
 
 
-module.exports={
+module.exports = {
     Loadproduct,
     addProduct,
     Loadprodutaddform,
@@ -339,5 +398,6 @@ module.exports={
     Proceedtoeditprdct,
     viewproducts,
     searchproducts,
+    sortviewproduct,
 
 }

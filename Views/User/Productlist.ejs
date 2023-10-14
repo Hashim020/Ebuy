@@ -60,8 +60,7 @@
 									class="caret"></span></a>
 							<ul class="dropdown-menu" style="width: auto;white-space: nowrap;">
 								<% categories1.forEach(category=> { %>
-									<a href="/showproducts/<%=category?._id%>"
-										style="display: block;width: 100%;">
+									<a href="/showproducts/<%=category?._id%>" style="display: block;width: 100%;">
 										<li>
 											<%=category.name%>
 										</li>
@@ -255,13 +254,15 @@
 						<div class="store-filter clearfix">
 							<div class="store-sort">
 								<label for="sortSelect">Sort By:</label>
-								<select class="input-select" id="sortSelect" title="Sort By">
+								<div id="productList"></div>
+								<select class="input-select" id="sortSelect" title="Sort By" onchange="sendRequest()">
 									<option>--select one</option>
 									<option value="0">Price low to high</option>
 									<option value="1">Price high to low</option>
 									<option value="2">Date of Arrival</option>
 								</select>
-								
+
+
 								</label>
 							</div>
 							<ul class="store-grid">
@@ -284,8 +285,7 @@
 											<p class="">
 												<%=categories.name%>
 											</p>
-											<h4 class="product-name"><a
-													href="/viewproducts/<%=products?._id%>">
+											<h4 class="product-name"><a href="/viewproducts/<%=products?._id%>">
 													<%=products.name%>
 												</a></h4>
 											<h4 class="product-price">
@@ -304,12 +304,14 @@
 												<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span
 														class="tooltipp">add to wishlist</span></button>
 											</div>
-										</div><% if(products.stock>0){%>
-										<div class="add-to-cart">
-											<button onclick="addtocart('<%=products._id%>')" class="add-to-cart-btn"><i
-													class="fa fa-shopping-cart"></i> add to cart</button>
 										</div>
-										<%} %>
+										<% if(products.stock>0){%>
+											<div class="add-to-cart">
+												<button onclick="addtocart('<%=products._id%>')"
+													class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to
+													cart</button>
+											</div>
+											<%} %>
 
 									</div>
 								</div>
@@ -384,81 +386,92 @@
 
 			<script>
 				async function addtocart(proId) {
-				try {
-					const response = await $.ajax({
-						url: '/add-to-cart/' + proId,
-						method: 'POST'
-					});
-			
-					if (response.status === true) {
+					try {
+						const response = await $.ajax({
+							url: '/add-to-cart/' + proId,
+							method: 'POST'
+						});
+
+						if (response.status === true) {
 							Swal.fire({
 								title: 'Added To Cart',
 								text: 'Your Product has been added to Cart',
 								icon: 'success',
 								timer: 5000
 							}).then(() => {
-							window.location.reload();
-						});
-					} else if (response.status === false) {
+								window.location.reload();
+							});
+						} else if (response.status === false) {
+							Swal.fire({
+								title: 'Error',
+								text: 'Failed to add product to Cart',
+								icon: 'error'
+							});
+						} else {
+							const loginResponse = await $.ajax({
+								url: '/login',
+								method: 'GET'
+							});
+
+							window.location.href = '/login';
+						}
+					} catch (error) {
+						console.error('Error:', error);
+
 						Swal.fire({
 							title: 'Error',
-							text: 'Failed to add product to Cart',
+							text: 'An error occurred',
 							icon: 'error'
 						});
-					} else {
-						const loginResponse = await $.ajax({
-							url: '/login',
-							method: 'GET'
-						});
-			
-						window.location.href = '/login';
 					}
-				} catch (error) {
-					console.error('Error:', error);
-			
-					Swal.fire({
-						title: 'Error',
-						text: 'An error occurred',
-						icon: 'error'
-					});
 				}
-			}
-			
+
 			</script>
 			<!-- ===============================================SORTING============================================================================================================================================= -->
 
 
-<script>
-	document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("sortSelect").addEventListener("change", function() {
-        // Code to handle the sorting and updating of the product list
-        const selectedValue = this.value;
-        const products = JSON.parse('<%=products%>');
-        // Assuming you have an array of products named 'products'
-        if (selectedValue === "0") {
-            // Sort by price low to high
-            products.sort((a, b) => a.offerprice - b.offerprice);
-        } else if (selectedValue === "1") {
-            // Sort by price high to low
-            products.sort((a, b) => b.offerprice - a.offerprice);
-        } else if (selectedValue === "2") {
-            // Sort by date of arrival (assuming products have a date property)
-            products.sort((a, b) => new Date(a.date) - new Date(b.date));
-        }
+			<script>
+				function sendRequest() {
+    var selectedOption = document.getElementById("sortSelect").value;
+    var categoryId = "<%=categories._id%>";
+    var url = "/Sort-Products?category_id=" + categoryId + "&option=" + selectedOption;
 
-        // Update Product Display
-        const productList = document.getElementById("productList");
-        productList.innerHTML = ""; // Clear existing content
+    console.log('working');
 
-        products.forEach(product => {
-            const productElement = document.createElement("div");
-            productElement.textContent = product.name;
-            productList.appendChild(productElement);
+    // Send the GET request
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text(); // Assuming response is HTML content
+        })
+        .then(data => {
+            // Create a temporary element to parse the HTML
+            var tempElement = document.createElement('div');
+            tempElement.innerHTML = data;
+
+            // Extract the product list from the HTML response
+            var productList = tempElement.querySelector('#store .row');
+
+            // Get the current product list element on the page
+            var currentProductList = document.querySelector('#store .row');
+
+            // Replace the current product list with the sorted one
+            currentProductList.innerHTML = productList.innerHTML;
+        })
+        .catch(error => {
+            console.error('Error:', error);
         });
-    });
-});
+}
 
-</script>
+
+			</script>
+
+
+
+
+
 
 
 

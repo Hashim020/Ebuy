@@ -62,6 +62,7 @@ user_route.post('/register',userController.insertUser)
 user_route.get("/showproducts/:id",ProductControl.listprocuts);
 user_route.get("/viewproducts/:id",ProductControl.viewproducts);
 user_route.post("/search-items",ProductControl.searchproducts);
+user_route.get("/Sort-Products",ProductControl.sortviewproduct);
 
 
 user_route.get("/view-cart",cartcontroller.loadcart);
