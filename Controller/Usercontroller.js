@@ -873,7 +873,7 @@ const loadorderhistory = async (req, res) => {
 
 const cancelOrder = async (req, res) => {
   try {
-    var orderId = req.body.order_id;
+    const orderId = req.body.order_id;
 
     // Update Order Status
     await Order.findByIdAndUpdate(orderId, { status: 'Return-Req' });
@@ -908,7 +908,7 @@ const cancelOrder = async (req, res) => {
 
         await wallet.save();
       }else {
-        // Wallet doesn't exist, create a new one
+        const user_id=req.session.user_id
         const newWallet = new Wallet({
             user: user_id,
             balance: order.total, // Assuming this is the initial balance
