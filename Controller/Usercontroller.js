@@ -907,7 +907,21 @@ const cancelOrder = async (req, res) => {
         wallet.transactions.push(transaction);
 
         await wallet.save();
-      }
+      }else {
+        // Wallet doesn't exist, create a new one
+        const newWallet = new Wallet({
+            user: user_id,
+            balance: order.total, // Assuming this is the initial balance
+            transactions: [{
+                orderId: orderId,
+                Amount: order.total,
+                transactionstype: 'Credit',
+                transactionsDate: new Date()
+            }]
+        });
+    
+        await newWallet.save();
+    }
     }
 
     // Update Order Status
