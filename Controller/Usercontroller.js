@@ -873,7 +873,7 @@ const loadorderhistory = async (req, res) => {
 
 const cancelOrder = async (req, res) => {
   try {
-    const orderId = req.body.order_id;
+    var orderId = req.body.order_id;
 
     // Update Order Status
     await Order.findByIdAndUpdate(orderId, { status: 'Return-Req' });
