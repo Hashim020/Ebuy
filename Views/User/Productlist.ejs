@@ -261,6 +261,7 @@
 									<option value="1">Price high to low</option>
 									<option value="2">Date of Arrival</option>
 								</select>
+								
 								</label>
 							</div>
 							<ul class="store-grid">
@@ -427,7 +428,37 @@
 			<!-- ===============================================SORTING============================================================================================================================================= -->
 
 
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("sortSelect").addEventListener("change", function() {
+        // Code to handle the sorting and updating of the product list
+        const selectedValue = this.value;
+        const products = JSON.parse('<%=products%>');
+        // Assuming you have an array of products named 'products'
+        if (selectedValue === "0") {
+            // Sort by price low to high
+            products.sort((a, b) => a.offerprice - b.offerprice);
+        } else if (selectedValue === "1") {
+            // Sort by price high to low
+            products.sort((a, b) => b.offerprice - a.offerprice);
+        } else if (selectedValue === "2") {
+            // Sort by date of arrival (assuming products have a date property)
+            products.sort((a, b) => new Date(a.date) - new Date(b.date));
+        }
 
+        // Update Product Display
+        const productList = document.getElementById("productList");
+        productList.innerHTML = ""; // Clear existing content
+
+        products.forEach(product => {
+            const productElement = document.createElement("div");
+            productElement.textContent = product.name;
+            productList.appendChild(productElement);
+        });
+    });
+});
+
+</script>
 
 
 
