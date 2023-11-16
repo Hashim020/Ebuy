@@ -283,7 +283,9 @@ const verifyLogin = async (req, res) => {
           console.log(passwordMatch);// checking password match or not
           req.session.user_id = userData._id
           // console.log(req.session.user_id);
-          res.redirect('/')
+          const message = "Sucessfully LogedIn";
+                const encodedMessage = encodeURIComponent(message);
+          res.redirect(`/?message=${encodedMessage}`)
 
         } else {
           res.render('Login', { message: "Email and Passwords are Incorrect" });
