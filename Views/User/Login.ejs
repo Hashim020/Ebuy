@@ -68,8 +68,8 @@
     <div class="container py-5 h-100 d-flex align-items-center justify-content-center">
       <div class="col-md-7 col-lg-5 col-xl-5">
         <div class="card p-4">
-          <div class="text-center mb-4" style="background-color: #333333; padding: 10px; border-radius: 10px;">
-            <img src="../Assets/img/logo.png" alt="Logo">
+          <div  class="text-center mb-4" style="background-color: #333333; padding: 10px; border-radius: 10px;">
+            <img onclick="changeUrl()" style="cursor: pointer;" src="../Assets/img/logo.png" alt="Logo">
           </div>
           <form action="/verifylogin" method="post">
             <div class="form-outline">
@@ -95,6 +95,14 @@
       </div>
     </div>
   </section>
+  <script>
+    // Define the function to change the URL
+    function changeUrl() {
+        // Change the URL when the button is clicked
+        window.location.href = '/';
+    }
+</script>
+
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
     integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
     crossorigin="anonymous"></script>
