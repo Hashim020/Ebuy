@@ -68,10 +68,19 @@ const loadHome = async (req, res) => {
     const sevenDaysAgo = new Date(today);
     sevenDaysAgo.setDate(today.getDate() - 7); // Assuming you want to find products added in the last 7 days
 
-    const newProducts = await Product.find({
+    let newProducts = await Product.find({
       createdAt: { $gte: sevenDaysAgo, $lte: today },
-      is_Listed: true // Only show products that are listed
+      is_Listed: true
     }).limit(10).populate('category');
+    
+    if (newProducts.length === 0) {
+      const fallbackProducts = await Product.find({})
+        .limit(10)
+        .sort({ createdAt: -1 })
+        .populate('category');
+    
+      newProducts = fallbackProducts;
+    }
     var message = '';
     if (req.query.message) {
       message = req.query.message;
